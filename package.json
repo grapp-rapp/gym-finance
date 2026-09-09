@@ -1,0 +1,33 @@
+{
+  "name": "shaar-binyamin-gym-finance",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Owner operating dashboard for the Shaar Binyamin gym rebuild — cash in, cash out, bank cash, debt, owner pay, members.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -b --noEmit",
+    "extract": "node scripts/extract-xlsx.mjs",
+    "reconcile": "node scripts/reconcile.mjs"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "recharts": "^2.15.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.2",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.4",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,147 @@
+{
+ "meta": {
+  "source": "model.xlsx",
+  "extractedAt": "2026-09-09",
+  "note": "Computed values read straight out of the reference workbook. Do not hand-edit."
+ },
+ "scenarios": {
+  "A": {
+   "debtFreeOperatingMonth": 42,
+   "primeDebtFreeOperatingMonth": 36,
+   "salaryStartOperatingMonth": 43,
+   "totalOwnerGrossSalaries": 360000,
+   "totalOwnerPayrollCost": 432000,
+   "interestSaved": 48787.13966,
+   "totalExtraDebtPrepayments": 613329.3085,
+   "year5EndingCash": 1469750.757,
+   "year5CashAboveTarget": 1319750.757,
+   "perPartnerIfDistributed": 659875.3786,
+   "monthsDebtEliminatedEarly": 27,
+   "minCashFullTimeline": 28954.0014,
+   "minCashAfterReopening": 126843.9334
+  },
+  "B": {
+   "debtFreeOperatingMonth": 42,
+   "primeDebtFreeOperatingMonth": 42,
+   "salaryStartOperatingMonth": 13,
+   "totalOwnerGrossSalaries": 660000,
+   "totalOwnerPayrollCost": 792000,
+   "interestSaved": 37952.11454,
+   "totalExtraDebtPrepayments": 522877.0089,
+   "year5EndingCash": 1184207.788,
+   "year5CashAboveTarget": 1034207.788,
+   "perPartnerIfDistributed": 517103.8939,
+   "monthsDebtEliminatedEarly": 27,
+   "minCashFullTimeline": 28954.0014,
+   "minCashAfterReopening": 126843.9334
+  },
+  "C": {
+   "debtFreeOperatingMonth": 54,
+   "primeDebtFreeOperatingMonth": 48,
+   "salaryStartOperatingMonth": 7,
+   "totalOwnerGrossSalaries": 1080000,
+   "totalOwnerPayrollCost": 1296000,
+   "interestSaved": 17002.60731,
+   "totalExtraDebtPrepayments": 394539.1915,
+   "year5EndingCash": 779996.6673,
+   "year5CashAboveTarget": 629996.6673,
+   "perPartnerIfDistributed": 314998.3336,
+   "monthsDebtEliminatedEarly": 15,
+   "minCashFullTimeline": -43607.93588,
+   "minCashAfterReopening": -43607.93588
+  },
+  "D": {
+   "debtFreeOperatingMonth": 47,
+   "primeDebtFreeOperatingMonth": 42,
+   "salaryStartOperatingMonth": 7,
+   "totalOwnerGrossSalaries": 670000,
+   "totalOwnerPayrollCost": 804000,
+   "interestSaved": 32748.36191,
+   "totalExtraDebtPrepayments": 509480.1164,
+   "year5EndingCash": 1170960.898,
+   "year5CashAboveTarget": 1020960.898,
+   "perPartnerIfDistributed": 510480.4492,
+   "monthsDebtEliminatedEarly": 22,
+   "minCashFullTimeline": 28954.0014,
+   "minCashAfterReopening": 89793.06633
+  }
+ },
+ "structural": {
+  "operatingCostGross": 69849,
+  "operatingCostExVat": 63913.72881,
+  "blendedFee": 223,
+  "reopeningMembers": 238,
+  "startupVatRefund": 151933.7286,
+  "cashHeadroom": 68990.0014,
+  "cashAfterBuild": 160869.73,
+  "loanAPayment": 4000,
+  "loanBPayment": 16881.22078,
+  "totalDebtService": 20881.22078,
+  "primeRate": 0.0475,
+  "contractualInterest": 109909.4092391,
+  "paymentStartTimelineMonth": 12,
+  "paymentStartOperatingMonth": 10
+ },
+ "dashboardYears": [
+  {
+   "cashIn": 998544,
+   "operatingCashOut": 927747.2542,
+   "debtPaid": 81666.47576,
+   "taxPaid": 0,
+   "ownerPayroll": 0,
+   "totalCashOut": 1009413.73,
+   "netCashChange": -10869.73,
+   "endingCash": 150000,
+   "debtRemaining": 1068862.656,
+   "endMembers": 450
+  },
+  {
+   "cashIn": 1500294,
+   "operatingCashOut": 1008537.508,
+   "debtPaid": 424218.2364,
+   "taxPaid": 67538.25514,
+   "ownerPayroll": 0,
+   "totalCashOut": 1500294,
+   "netCashChange": 0,
+   "endingCash": 150000,
+   "debtRemaining": 679457.9376,
+   "endMembers": 600
+  },
+  {
+   "cashIn": 1864899,
+   "operatingCashOut": 1067245.093,
+   "debtPaid": 636626.7008,
+   "taxPaid": 161027.206,
+   "ownerPayroll": 0,
+   "totalCashOut": 1864899,
+   "netCashChange": 0,
+   "endingCash": 150000,
+   "debtRemaining": 58610.85664,
+   "endMembers": 725
+  },
+  {
+   "cashIn": 2127147,
+   "operatingCashOut": 1109471.466,
+   "debtPaid": 58610.85664,
+   "taxPaid": 215261.4928,
+   "ownerPayroll": 0,
+   "totalCashOut": 1383343.816,
+   "netCashChange": 743803.1845,
+   "endingCash": 893803.1845,
+   "debtRemaining": 0,
+   "endMembers": 800
+  },
+  {
+   "cashIn": 2291498,
+   "operatingCashOut": 1135934.763,
+   "debtPaid": 0,
+   "taxPaid": 246975.6646,
+   "ownerPayroll": 0,
+   "totalCashOut": 1382910.427,
+   "netCashChange": 908587.5727,
+   "endingCash": 1802390.757,
+   "debtRemaining": 0,
+   "endMembers": 850
+  }
+ ]
+}
