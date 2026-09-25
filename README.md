@@ -287,3 +287,9 @@ Retained this application's calendar-based month labels, editable partner names,
 Recommended next addition: downloadable/importable backups of browser data. Independent partner salaries are now implemented. The model's Moatza capacity reservation currently follows the workbook even before the agreement starts; a future model change should reserve capacity only once it begins and cap the Moatza block itself. Operating cash-out follows the workbook's net-VAT cash bridge and should be considered when entering bank actuals.
 
 Independent partner salaries are editable in Scenario Lab and Inputs, before and after debt repayment. Both partners share the scenario start month; employer costs use their combined gross pay. Legacy saved scenarios retain equal pay until edited. Scenario copies preserve separate amounts. Backup/import remains a recommended future addition.
+
+## Reserve accounting correction
+
+The live plan excludes the old run-in reserve from startup spending: reserve cash remains in the bank. A single scenario cash target defaults to ILS 100,000 and limits extra debt sweeps; it is not deducted from opening cash. Version-one saved plans migrate once to the ILS 100,000 target and remove the reserve expense while preserving financing, salaries, actuals and other settings. Subsequent target edits persist.
+
+Historical reconciliation retains the original workbook's ILS 75,000 allocation and ILS 150,000 target solely for comparison; these are not live planning defaults. Validation: 231 tests pass (one existing skip), including saved-state migration, unchanged VAT refunds, opening cash and sweep thresholds. Production build passes.

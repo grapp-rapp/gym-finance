@@ -556,7 +556,7 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
               prefix="₪"
               step={10000}
               min={0}
-              hint="Operating cash kept in the company — not a legal floor."
+              hint="Emergency buffer within bank cash, not an expense or a second reserve. Debt sweeps only use cash above this target."
             />
             <PercentField
               label="Excess cash used at each sweep"

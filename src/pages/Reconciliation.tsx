@@ -4,7 +4,7 @@ import { Callout, Card, Chip, PageHeader, SectionTitle, Segmented, StatCard, cx 
 import { formatCurrencyExact } from '../lib/format';
 import {
   WORKBOOK_ASSUMPTIONS,
-  DEFAULT_SCENARIOS,
+  WORKBOOK_SCENARIOS,
   PARITY_TOLERANCE,
   buildReconciliation,
   summariseReconciliation,
@@ -29,7 +29,7 @@ export function Reconciliation() {
   const rows = useMemo(
     () =>
       basis === 'defaults'
-        ? buildReconciliation(referenceValues as unknown as ReferenceValues, WORKBOOK_ASSUMPTIONS, DEFAULT_SCENARIOS)
+        ? buildReconciliation(referenceValues as unknown as ReferenceValues, WORKBOOK_ASSUMPTIONS, WORKBOOK_SCENARIOS)
         : buildReconciliation(referenceValues as unknown as ReferenceValues, assumptions, scenarios),
     [basis, assumptions, scenarios],
   );

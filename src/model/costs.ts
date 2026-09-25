@@ -45,11 +45,11 @@ export function coreOpexAt(a: Assumptions, operatingMonth: number, monthlyExVat:
 
 /** Startup / build totals. Reference: "Startup & Funding" sheet, rows 15-22. */
 export interface StartupTotals {
-  /** Total startup budget ex VAT including the run-in reserve (₪919,076.27). */
+  /** Total startup budget ex VAT excluding cash reserves. */
   totalExVat: number;
   /** Reclaimable startup VAT — the refund that lands later (₪151,933.73). */
   reclaimableVat: number;
-  /** Gross cash allocated including the reserve (₪1,071,010.00). */
+  /** Gross cash allocated for actual startup expenses. */
   grossCash: number;
   /** Owner equity + Loan A + Loan B. */
   totalFinancing: number;
@@ -63,7 +63,7 @@ export interface StartupTotals {
 }
 
 export function startupTotals(a: Assumptions): StartupTotals {
-  const lines = a.startupCosts.map((line) => {
+  const lines = a.startupCosts.filter((line) => line.id !== 'run-in').map((line) => {
     const vat = line.vatable ? line.exVat * a.vatRate : 0;
     return { ...line, vat, gross: line.exVat + vat };
   });

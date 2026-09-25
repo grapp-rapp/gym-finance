@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import fixture from '../__fixtures__/spreadsheet.json';
-import { WORKBOOK_ASSUMPTIONS, DEFAULT_SCENARIOS, NO_SALARY_POLICY } from '../assumptions';
+import { WORKBOOK_ASSUMPTIONS, WORKBOOK_SCENARIOS, NO_SALARY_POLICY } from '../assumptions';
 import { runModel } from '../cashflow';
 import { operatingCostTotals, startupTotals } from '../costs';
 import { contractualSchedule, loanTerms } from '../financing';
@@ -24,7 +24,7 @@ type Grid = Array<Record<string, number | string | null>>;
 
 const a = WORKBOOK_ASSUMPTIONS;
 const scenarioById = (id: string): ScenarioPolicy => {
-  const found = DEFAULT_SCENARIOS.find((s) => s.id === id);
+  const found = WORKBOOK_SCENARIOS.find((s) => s.id === id);
   if (!found) throw new Error(`No scenario ${id}`);
   return found;
 };

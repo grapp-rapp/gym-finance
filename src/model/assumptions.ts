@@ -32,7 +32,6 @@ export const DEFAULT_STARTUP_COSTS: StartupCostLine[] = [
   { id: 'build', name: 'Build / renovation', exVat: 200000, vatable: true, note: 'Consultant' },
   { id: 'op-equipment', name: 'Operational equipment', exVat: 146000, vatable: true, note: 'Consultant' },
   { id: 'gym-equipment', name: 'Professional gym equipment', exVat: 399076.27, vatable: true, note: 'Eurotec quote — exact' },
-  { id: 'run-in', name: 'Run-in reserve', exVat: 75000, vatable: false, note: 'Working-capital reserve, not a VATable invoice' },
   { id: 'presale', name: 'Optional extra presale marketing', exVat: 0, vatable: true, note: 'Only if activated' },
 ];
 
@@ -104,7 +103,7 @@ export const DEFAULT_SCENARIOS: ScenarioPolicy[] = [
     preDebtStartMonth: 0,
     preDebtSalary: 0,
     postDebtSalary: 10000,
-    cashTarget: 150000,
+    cashTarget: 100000,
     sweepFrequency: 6,
     firstSweepMonth: 12,
     builtIn: true,
@@ -116,7 +115,7 @@ export const DEFAULT_SCENARIOS: ScenarioPolicy[] = [
     preDebtStartMonth: 13,
     preDebtSalary: 5000,
     postDebtSalary: 10000,
-    cashTarget: 150000,
+    cashTarget: 100000,
     sweepFrequency: 6,
     firstSweepMonth: 12,
     builtIn: true,
@@ -128,7 +127,7 @@ export const DEFAULT_SCENARIOS: ScenarioPolicy[] = [
     preDebtStartMonth: 7,
     preDebtSalary: 10000,
     postDebtSalary: 10000,
-    cashTarget: 150000,
+    cashTarget: 100000,
     sweepFrequency: 6,
     firstSweepMonth: 12,
     builtIn: true,
@@ -140,7 +139,7 @@ export const DEFAULT_SCENARIOS: ScenarioPolicy[] = [
     preDebtStartMonth: 7,
     preDebtSalary: 5000,
     postDebtSalary: 10000,
-    cashTarget: 150000,
+    cashTarget: 100000,
     sweepFrequency: 6,
     firstSweepMonth: 12,
     builtIn: true,
@@ -165,4 +164,8 @@ export const NO_SALARY_POLICY: ScenarioPolicy = {
 };
 
 /** Historical workbook inputs used only for parity checks. */
-export const WORKBOOK_ASSUMPTIONS: Assumptions = { ...DEFAULT_ASSUMPTIONS, launchMembers: 238, selfFinancing: 0 };
+export const WORKBOOK_ASSUMPTIONS: Assumptions = {
+  ...DEFAULT_ASSUMPTIONS, launchMembers: 238, selfFinancing: 0,
+  startupCosts: [...DEFAULT_STARTUP_COSTS, { id: 'historical-reserve-allocation', name: 'Historical workbook reserve deduction', exVat: 75000, vatable: false, note: 'Historical reconciliation only; not an expense in the live plan.' }],
+};
+export const WORKBOOK_SCENARIOS = DEFAULT_SCENARIOS.map(s => ({ ...s, cashTarget: 150000 }));

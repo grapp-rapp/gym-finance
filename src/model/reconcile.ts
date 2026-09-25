@@ -1,4 +1,4 @@
-import { WORKBOOK_ASSUMPTIONS, DEFAULT_SCENARIOS, NO_SALARY_POLICY } from './assumptions';
+import { WORKBOOK_ASSUMPTIONS, WORKBOOK_SCENARIOS, NO_SALARY_POLICY } from './assumptions';
 import { runModel } from './cashflow';
 import { operatingCostTotals, startupTotals } from './costs';
 import { contractualInterestTotal, loanTerms } from './financing';
@@ -122,7 +122,7 @@ export interface ReferenceValues {
 export function buildReconciliation(
   reference: ReferenceValues,
   assumptions: Assumptions = WORKBOOK_ASSUMPTIONS,
-  scenarios: ScenarioPolicy[] = DEFAULT_SCENARIOS,
+  scenarios: ScenarioPolicy[] = WORKBOOK_SCENARIOS,
 ): ReconciliationRow[] {
   const rows: ReconciliationRow[] = [];
   const opex = operatingCostTotals(assumptions);

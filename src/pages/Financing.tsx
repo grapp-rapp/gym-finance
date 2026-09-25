@@ -34,7 +34,7 @@ export function Financing() {
           <NumberField label="Loan A principal" value={a.loanAPrincipal} onChange={(loanAPrincipal) => setAssumptions({ loanAPrincipal })} prefix="₪" min={0} />
           <NumberField label="Loan B principal" value={a.loanBPrincipal} onChange={(loanBPrincipal) => setAssumptions({ loanBPrincipal })} prefix="₪" min={0} />
         </div>
-        <p className="mt-4 text-sm text-muted">Total funding {formatCurrency(startup.totalFinancing)} minus startup allocation {formatCurrency(startup.grossCash)} leaves {formatCurrency(startup.cashHeadroom)} opening cash. Owner funds are equity, with no interest or scheduled repayment. For full self-financing set both loans to zero.</p>
+        <p className="mt-4 text-sm text-muted">Total funding {formatCurrency(startup.totalFinancing)} minus startup allocation {formatCurrency(startup.grossCash)} leaves {formatCurrency(startup.cashHeadroom)} opening cash. Your {formatCurrency(selectedScenario.cashTarget)} emergency cash target is part of this bank balance, not another deduction. Owner funds are equity, with no interest or scheduled repayment. For full self-financing set both loans to zero.</p>
         {a.loanAPrincipal + a.loanBPrincipal === 0 && <p className="mt-3 text-sm text-muted">No loan payments or debt sweeps. After-debt owner salaries apply from launch.</p>}
       </Card>
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">

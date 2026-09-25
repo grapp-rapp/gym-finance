@@ -1,3 +1,4 @@
+import { migrateReservePlan } from './reserveMigration';
 import {
   createContext,
   useCallback,
@@ -30,7 +31,7 @@ import {
  */
 
 const STORAGE_KEY = 'shaar-binyamin-gym-model/v1';
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 2;
 
 export type PlanMode = 'plan' | 'actual';
 
@@ -62,16 +63,16 @@ function load(): PersistedState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultState();
     const parsed = JSON.parse(raw) as Partial<PersistedState>;
-    if (parsed.version !== STORAGE_VERSION) return defaultState();
+    if (parsed.version !== 1 && parsed.version !== STORAGE_VERSION) return defaultState();
     const base = defaultState();
-    return {
+    return migrateReservePlan({
       ...base,
       ...parsed,
       // Merge assumptions field-by-field so a saved state from an older build that
       // predates a new input still gets a sensible default for it.
       assumptions: { ...base.assumptions, ...(parsed.assumptions ?? {}) },
       scenarios: parsed.scenarios?.length ? parsed.scenarios : base.scenarios,
-    };
+    });
   } catch {
     return defaultState();
   }
