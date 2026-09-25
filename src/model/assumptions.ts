@@ -37,6 +37,8 @@ export const DEFAULT_STARTUP_COSTS: StartupCostLine[] = [
 ];
 
 export const DEFAULT_ASSUMPTIONS: Assumptions = {
+  selfFinancing: 0,
+  launchMembers: 360,
   closureMonths: 3,
   operatingMonths: 60,
 
@@ -161,3 +163,6 @@ export const NO_SALARY_POLICY: ScenarioPolicy = {
   firstSweepMonth: 12,
   builtIn: true,
 };
+
+/** Historical workbook inputs used only for parity checks. */
+export const WORKBOOK_ASSUMPTIONS: Assumptions = { ...DEFAULT_ASSUMPTIONS, launchMembers: 238, selfFinancing: 0 };

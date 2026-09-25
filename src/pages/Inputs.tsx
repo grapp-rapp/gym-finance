@@ -56,12 +56,12 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
             <Button
               variant="danger"
               onClick={() => {
-                if (window.confirm('Reset every input back to the original spreadsheet values?')) {
+                if (window.confirm('Reset all inputs, scenarios and actuals to the current app defaults?')) {
                   resetAll();
                 }
               }}
             >
-              Reset to spreadsheet defaults
+              Reset to app defaults
             </Button>
           )
         }
@@ -78,7 +78,7 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
             >
               reconciliation report
             </button>{' '}
-            to see the effect, or reset to the original values.
+            to see the effect, or reset to the current app defaults.
           </Callout>
         </div>
       )}
@@ -150,19 +150,13 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
         >
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <NumberField
-              label="Members paying today"
+              label="Historical members (reference only)"
               value={a.currentMembers}
               onChange={(currentMembers) => setAssumptions({ currentMembers })}
               suffix="members"
               min={0}
             />
-            <PercentField
-              label="Retention at reopening"
-              value={a.retentionAtReopening}
-              onChange={(retentionAtReopening) => setAssumptions({ retentionAtReopening })}
-              hint={`${formatNumber(reopeningMembers(a))} members come back.`}
-              max={1}
-            />
+            <NumberField label="Launch month members" value={a.launchMembers} onChange={(launchMembers) => setAssumptions({ launchMembers })} min={0} suffix="members" hint="Starting organic membership, growing toward the year-one target and capped by capacity." />
             <NumberField
               label="Planning capacity"
               value={a.capacity}
@@ -449,14 +443,15 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
           </div>
         </Accordion>
 
-        {/* --- Loans ---------------------------------------------------- */}
+        <Card className="p-5"><NumberField label="Self-financing — owner funds" value={a.selfFinancing} onChange={(selfFinancing) => setAssumptions({ selfFinancing })} prefix="₪" min={0} hint="Upfront equity added to opening cash. Set both loans to zero for full self-financing." /></Card>
         <Accordion
-          title="Loans"
-          summary={`${formatCurrency(a.loanAPrincipal + a.loanBPrincipal)} total · ${formatCurrency(terms.totalPayment)} / month after grace`}
+          title="Funding — owner funds and loans"
+          summary={`${formatCurrency(a.selfFinancing + a.loanAPrincipal + a.loanBPrincipal)} total · ${formatCurrency(terms.totalPayment)} / month after grace`}
         >
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <NumberField
               label="Loan A — interest free"
+              min={0}
               value={a.loanAPrincipal}
               onChange={(loanAPrincipal) => setAssumptions({ loanAPrincipal })}
               prefix="₪"
@@ -464,6 +459,7 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
             />
             <NumberField
               label="Loan B — Prime linked"
+              min={0}
               value={a.loanBPrincipal}
               onChange={(loanBPrincipal) => setAssumptions({ loanBPrincipal })}
               prefix="₪"

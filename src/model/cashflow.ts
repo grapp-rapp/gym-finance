@@ -145,7 +145,7 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
     if (t === 0) events.push('FUNDING');
     if (phase === 'BUILD' && t > 0) events.push('BUILD');
     if (operatingMonth === 1) events.push('REOPEN');
-    if (t === a.graceMonths) events.push('DEBT START');
+    if (t === a.graceMonths && regularDebtPayment > 0) events.push('DEBT START');
     if (extraDebtPayment > 0) events.push('DEBT SWEEP');
     if (pay.partner1Gross > 0 && previousMonthHadNoSalary(months)) events.push('SALARY START');
     if (debtRemaining === 0 && previousDebtRemaining > 0) events.push('DEBT FREE');

@@ -58,6 +58,10 @@ export interface ScenarioPolicy {
 
 /** Every editable input in the model. Defaults mirror the current spreadsheet values. */
 export interface Assumptions {
+  /** Upfront owner equity, not operating income or repayable debt. */
+  selfFinancing: number;
+  /** Explicit organic membership in the first operating month. */
+  launchMembers: number;
   // --- Business / timeline -------------------------------------------------
   /** Full renovation closure length in months (Inputs B27). */
   closureMonths: number;

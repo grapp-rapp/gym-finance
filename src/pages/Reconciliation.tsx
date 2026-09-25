@@ -3,7 +3,7 @@ import referenceValues from '../model/__fixtures__/reference-values.json';
 import { Callout, Card, Chip, PageHeader, SectionTitle, Segmented, StatCard, cx } from '../components/ui';
 import { formatCurrencyExact } from '../lib/format';
 import {
-  DEFAULT_ASSUMPTIONS,
+  WORKBOOK_ASSUMPTIONS,
   DEFAULT_SCENARIOS,
   PARITY_TOLERANCE,
   buildReconciliation,
@@ -29,7 +29,7 @@ export function Reconciliation() {
   const rows = useMemo(
     () =>
       basis === 'defaults'
-        ? buildReconciliation(referenceValues as unknown as ReferenceValues, DEFAULT_ASSUMPTIONS, DEFAULT_SCENARIOS)
+        ? buildReconciliation(referenceValues as unknown as ReferenceValues, WORKBOOK_ASSUMPTIONS, DEFAULT_SCENARIOS)
         : buildReconciliation(referenceValues as unknown as ReferenceValues, assumptions, scenarios),
     [basis, assumptions, scenarios],
   );
@@ -81,7 +81,7 @@ export function Reconciliation() {
           <Callout tone={isModified ? 'warn' : 'brand'}>
             {isModified
               ? 'Showing the model with your edited inputs against the original spreadsheet values. Differences here are the effect of your changes, not errors.'
-              : 'Your inputs currently match the spreadsheet defaults, so this view is identical to the parity check.'}
+              : 'Your plan uses the current app defaults, including 360 launch members. The historical workbook starts at 238; differences are expected.'}
           </Callout>
         )}
       </div>

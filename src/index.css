@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens. Light is the primary theme; dark follows the OS setting.
+ * Design tokens. Fixed light theme, independent of the OS setting.
  * Every colour is defined once here so the whole app stays consistent.
  */
 :root {
@@ -26,29 +26,6 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --c-canvas: #080d17;
-    --c-surface: #101827;
-    --c-surface-2: #161f31;
-    --c-line: #26314a;
-    --c-line-strong: #3a4761;
-    --c-ink: #f2f5fa;
-    --c-ink-2: #c3ccdd;
-    --c-muted: #8b97ae;
-    --c-brand: #6f9bff;
-    --c-brand-soft: #16264a;
-    --c-good: #34d399;
-    --c-good-soft: #0d2f26;
-    --c-warn: #fbbf24;
-    --c-warn-soft: #362507;
-    --c-bad: #f87171;
-    --c-bad-soft: #3a1414;
-    --c-debt: #a78bfa;
-    --c-shadow: 0 0 0;
-    color-scheme: dark;
-  }
-}
 
 @theme {
   --color-canvas: var(--c-canvas);

@@ -271,3 +271,17 @@ throughout, so a second location or a third case is another `runModel` call, not
 TypeScript · React 19 · Vite 7 · Tailwind CSS 4 · Recharts · Vitest. No routing, state-management,
 date or spreadsheet library — each was considered and none earned its weight for eight fixed
 screens and one pure model.
+
+## September 2026 update
+
+- Current app defaults start with 360 launch members; the historical workbook parity suite uses 238. Launch membership is directly editable and independent of historical retention.
+- Financing accepts upfront owner equity alongside loans. Set both loans to zero for full self-financing. Equity increases opening cash once, with no revenue, tax or debt repayment entry. After-debt salary policy applies from launch when no loans are used.
+- Existing browser state merges missing fields with defaults, preserving saved assumptions, scenarios and actuals.
+- The interface always uses light mode.
+- Actual cash-in and cash-out totals require all component fields; explicitly enter zero where appropriate.
+
+### Review of the GitHub version
+
+Retained this application's calendar-based month labels, editable partner names, expense-line editing, monthly actuals notes and live reconciliation against the historical workbook. These are useful additions compared with the separate Sites version. The Vite build and hash routing remain intact for Vercel.
+
+Recommended next additions: downloadable/importable backups of browser data, and independent salary amounts for each partner. The model's Moatza capacity reservation currently follows the workbook even before the agreement starts; a future model change should reserve capacity only once it begins and cap the Moatza block itself. Operating cash-out follows the workbook's net-VAT cash bridge and should be considered when entering bank actuals.
