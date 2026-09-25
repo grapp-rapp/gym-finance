@@ -44,6 +44,13 @@ export function ScenarioLab() {
       render: (r) => formatCurrency(r.policy.partner2PreDebtSalary ?? r.policy.preDebtSalary) + ' → ' + formatCurrency(r.policy.partner2PostDebtSalary ?? r.policy.postDebtSalary),
     },
     {
+      label: 'Scheduled pay while debt remains',
+      render: (r) => r.policy.salaryStep?.enabled
+        ? 'From op ' + Math.max(r.policy.preDebtStartMonth, r.policy.salaryStep.operatingMonth) + ': ' + formatCurrency(r.policy.salaryStep.partner1Gross) + ' / ' + formatCurrency(r.policy.salaryStep.partner2Gross)
+        : 'Not enabled',
+      hint: assumptions.partner1Name + ' / ' + assumptions.partner2Name + ' gross per month',
+    },
+    {
       label: 'Debt-free month',
       render: (r) =>
         r.debtFreeOperatingMonth === null ? 'Beyond model' : `Op ${r.debtFreeOperatingMonth}`,

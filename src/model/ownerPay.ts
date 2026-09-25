@@ -8,7 +8,7 @@ import type { Assumptions, ScenarioPolicy } from './types';
  *   1. Nothing is paid during the build period.
  *   2. If ALL debt was gone at the end of last month, pay the post-debt salary.
  *   3. Otherwise pay the pre-debt salary, but only from `preDebtStartMonth` onwards
- *      and only when a pre-debt salary is actually configured.
+ *      applying any enabled scheduled raise from its operating month.
  *
  * Each partner has independent gross amounts; legacy plans retain equal salaries.
  */
@@ -48,6 +48,10 @@ export function ownerPayFor(input: OwnerPayInput): OwnerPayResult {
     ) {
       gross = policy.preDebtSalary;
       partner2Gross = policy.partner2PreDebtSalary ?? policy.preDebtSalary;
+      if (policy.salaryStep?.enabled && input.operatingMonth >= policy.salaryStep.operatingMonth) {
+        gross = policy.salaryStep.partner1Gross;
+        partner2Gross = policy.salaryStep.partner2Gross;
+      }
     }
   }
 

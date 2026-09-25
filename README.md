@@ -293,3 +293,7 @@ Independent partner salaries are editable in Scenario Lab and Inputs, before and
 The live plan excludes the old run-in reserve from startup spending: reserve cash remains in the bank. A single scenario cash target defaults to ILS 100,000 and limits extra debt sweeps; it is not deducted from opening cash. Version-one saved plans migrate once to the ILS 100,000 target and remove the reserve expense while preserving financing, salaries, actuals and other settings. Subsequent target edits persist.
 
 Historical reconciliation retains the original workbook's ILS 75,000 allocation and ILS 150,000 target solely for comparison; these are not live planning defaults. Validation: 231 tests pass (one existing skip), including saved-state migration, unchanged VAT refunds, opening cash and sweep thresholds. Production build passes.
+
+## Scheduled salary increase
+
+Scenario Lab and Inputs now offer an optional scheduled salary increase while debt remains. Choose an operating month (13 means the start of year two) and replacement gross amounts for each partner. The schedule is disabled by default, preserving existing plans. It applies no earlier than the scenario salary start; after-debt amounts take precedence once debt is cleared. Employer costs, tax, cash and sweep capacity recalculate normally. The schedule is a planning choice, not an automatic affordability trigger. Validation: 234 tests pass (one existing skip), including timing, disabled behavior, independent amounts, debt-free precedence and cash/tax identities; production build passes.

@@ -47,6 +47,8 @@ export interface ScenarioPolicy {
   /** Partner 2 overrides; absent in legacy plans means equal to partner 1. */
   partner2PreDebtSalary?: number;
   partner2PostDebtSalary?: number;
+  /** Optional replacement gross amounts while debt remains. */
+  salaryStep?: { enabled: boolean; operatingMonth: number; partner1Gross: number; partner2Gross: number };
   /** Gross salary per partner per month once debt reaches zero (row 7). */
   postDebtSalary: number;
   /** Cash kept in the company before any extra debt payment (row 8 / Inputs B80). */
