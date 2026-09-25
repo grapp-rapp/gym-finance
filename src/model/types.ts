@@ -42,8 +42,11 @@ export interface ScenarioPolicy {
    * Ignored when `preDebtSalary` is 0. (Salary Scenarios row 5.)
    */
   preDebtStartMonth: number;
-  /** Gross salary per partner per month before the business is debt-free (row 6). */
+  /** Partner 1 gross salary per month before the business is debt-free (row 6). */
   preDebtSalary: number;
+  /** Partner 2 overrides; absent in legacy plans means equal to partner 1. */
+  partner2PreDebtSalary?: number;
+  partner2PostDebtSalary?: number;
   /** Gross salary per partner per month once debt reaches zero (row 7). */
   postDebtSalary: number;
   /** Cash kept in the company before any extra debt payment (row 8 / Inputs B80). */
@@ -58,6 +61,10 @@ export interface ScenarioPolicy {
 
 /** Every editable input in the model. Defaults mirror the current spreadsheet values. */
 export interface Assumptions {
+  /** Upfront owner equity, not operating income or repayable debt. */
+  selfFinancing: number;
+  /** Explicit organic membership in the first operating month. */
+  launchMembers: number;
   // --- Business / timeline -------------------------------------------------
   /** Full renovation closure length in months (Inputs B27). */
   closureMonths: number;

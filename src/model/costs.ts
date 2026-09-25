@@ -51,7 +51,7 @@ export interface StartupTotals {
   reclaimableVat: number;
   /** Gross cash allocated including the reserve (₪1,071,010.00). */
   grossCash: number;
-  /** Loan A + Loan B (₪1,140,000). */
+  /** Owner equity + Loan A + Loan B. */
   totalFinancing: number;
   /** Cash left on day one after paying the gross build bill (₪68,990.00). */
   cashHeadroom: number;
@@ -70,7 +70,7 @@ export function startupTotals(a: Assumptions): StartupTotals {
   const totalExVat = lines.reduce((s, l) => s + l.exVat, 0);
   const reclaimableVat = lines.reduce((s, l) => s + l.vat, 0);
   const grossCash = lines.reduce((s, l) => s + l.gross, 0);
-  const totalFinancing = a.loanAPrincipal + a.loanBPrincipal;
+  const totalFinancing = a.selfFinancing + a.loanAPrincipal + a.loanBPrincipal;
   const cashHeadroom = totalFinancing - grossCash;
   const closureCost = a.closureMonths * a.closureCostExVat;
   return {

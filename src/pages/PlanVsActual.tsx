@@ -1,3 +1,4 @@
+import { actualTotals } from '../model/actuals';
 import { useMemo, useState } from 'react';
 import { PlanVsActualChart } from '../components/charts';
 import {
@@ -49,24 +50,7 @@ export function PlanVsActual() {
       .filter((m) => m.operatingMonth > 0)
       .map((month) => {
         const actual = actuals.find((entry) => entry.timelineMonth === month.timelineMonth);
-        const actualCashIn =
-          actual?.membershipCashIn === undefined && actual?.otherCashIn === undefined
-            ? null
-            : (actual?.membershipCashIn ?? 0) + (actual?.otherCashIn ?? 0);
-        const actualCashOut =
-          actual === undefined
-            ? null
-            : [
-                  actual.operatingCashOut,
-                  actual.debtPayment,
-                  actual.corporateTax,
-                  actual.ownerPayroll,
-                ].every((value) => value === undefined)
-              ? null
-              : (actual.operatingCashOut ?? 0) +
-                (actual.debtPayment ?? 0) +
-                (actual.corporateTax ?? 0) +
-                (actual.ownerPayroll ?? 0);
+        const { cashIn: actualCashIn, cashOut: actualCashOut } = actualTotals(actual);
 
         return {
           month,
@@ -110,7 +94,7 @@ export function PlanVsActual() {
     <div>
       <PageHeader
         title="Plan vs actual"
-        subtitle="Enter what really happened each month and see how the business is tracking against the plan."
+        subtitle="Enter what really happened each month. Totals appear only when all their fields are filled; enter 0 for categories with no activity."
       />
 
       {entered.length === 0 ? (

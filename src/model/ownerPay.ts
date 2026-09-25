@@ -10,7 +10,7 @@ import type { Assumptions, ScenarioPolicy } from './types';
  *   3. Otherwise pay the pre-debt salary, but only from `preDebtStartMonth` onwards
  *      and only when a pre-debt salary is actually configured.
  *
- * Both partners are modelled identically — they are 50/50 and both work in the business.
+ * Each partner has independent gross amounts; legacy plans retain equal salaries.
  */
 
 export interface OwnerPayResult {
@@ -36,24 +36,26 @@ export interface OwnerPayInput {
 export function ownerPayFor(input: OwnerPayInput): OwnerPayResult {
   const { policy } = input;
   let gross = 0;
+  let partner2Gross = 0;
 
   if (!input.isFundingMonth && input.isOperating) {
     if (input.previousDebtRemaining === 0) {
       gross = policy.postDebtSalary;
+      partner2Gross = policy.partner2PostDebtSalary ?? policy.postDebtSalary;
     } else if (
       input.operatingMonth > 0 &&
-      input.operatingMonth >= policy.preDebtStartMonth &&
-      policy.preDebtSalary > 0
+      input.operatingMonth >= policy.preDebtStartMonth
     ) {
       gross = policy.preDebtSalary;
+      partner2Gross = policy.partner2PreDebtSalary ?? policy.preDebtSalary;
     }
   }
 
-  const combined = gross * 2;
+  const combined = gross + partner2Gross;
   const totalPayrollCost = combined * (1 + input.employerLoad);
   return {
     partner1Gross: gross,
-    partner2Gross: gross,
+    partner2Gross,
     employerCosts: totalPayrollCost - combined,
     totalPayrollCost,
   };

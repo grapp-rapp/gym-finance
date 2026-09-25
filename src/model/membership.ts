@@ -5,15 +5,15 @@ import type { Assumptions } from './types';
  * Membership ramp.
  * Reference: "Monthly Base" sheet, column D.
  *
- * Operating month 1 is the reopening month and starts at retained members.
+ * Operating month 1 is the reopening month and starts at the explicit launch-member input.
  * Months 2-12 interpolate linearly to the Year 1 target; each following year
  * interpolates linearly between consecutive year-end targets. Every step is
  * rounded to whole members exactly as the sheet does, then capped at capacity.
  */
 
-/** Members retained at reopening: ROUND(currentMembers × retention, 0). */
+/** Explicit launch membership, rounded to whole members. */
 export function reopeningMembers(a: Assumptions): number {
-  return excelRound(a.currentMembers * a.retentionAtReopening, 0);
+  return excelRound(a.launchMembers, 0);
 }
 
 /** Organic members for a given operating month (0 during the build period). */

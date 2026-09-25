@@ -1,3 +1,4 @@
+import { PartnerSalaryFields } from '../components/PartnerSalaryFields';
 import { Button, Callout, Card, Chip, NumberField, PageHeader, SectionTitle, cx } from '../components/ui';
 import { CashVsDebtChart } from '../components/charts';
 import { formatCurrency, formatNumber } from '../lib/format';
@@ -35,11 +36,12 @@ export function ScenarioLab() {
         r.salaryStartOperatingMonth === null ? 'Never' : `Op month ${r.salaryStartOperatingMonth}`,
     },
     {
-      label: 'Owner salary each',
-      render: (r) =>
-        r.policy.preDebtSalary > 0
-          ? `${formatCurrency(r.policy.preDebtSalary)} → ${formatCurrency(r.policy.postDebtSalary)}`
-          : formatCurrency(r.policy.postDebtSalary),
+      label: assumptions.partner1Name + ' gross · before → after debt',
+      render: (r) => formatCurrency(r.policy.preDebtSalary) + ' → ' + formatCurrency(r.policy.postDebtSalary),
+    },
+    {
+      label: assumptions.partner2Name + ' gross · before → after debt',
+      render: (r) => formatCurrency(r.policy.partner2PreDebtSalary ?? r.policy.preDebtSalary) + ' → ' + formatCurrency(r.policy.partner2PostDebtSalary ?? r.policy.postDebtSalary),
     },
     {
       label: 'Debt-free month',
@@ -154,36 +156,8 @@ export function ScenarioLab() {
               </div>
 
               <div className="mt-4 space-y-3">
-                <NumberField
-                  label="Pre-debt salary each / month"
-                  value={policy.preDebtSalary}
-                  onChange={(value) => setScenario(policy.id, { preDebtSalary: value })}
-                  prefix="₪"
-                  step={500}
-                  min={0}
-                />
-                <NumberField
-                  label="Salary start — operating month"
-                  value={policy.preDebtStartMonth}
-                  onChange={(value) => setScenario(policy.id, { preDebtStartMonth: value })}
-                  step={1}
-                  min={0}
-                  max={60}
-                  // Always render a hint so the fields stay aligned across the four cards.
-                  hint={
-                    policy.preDebtSalary === 0
-                      ? 'No effect while the pre-debt salary is ₪0'
-                      : 'When the pre-debt salary begins'
-                  }
-                />
-                <NumberField
-                  label="Post-debt salary each / month"
-                  value={policy.postDebtSalary}
-                  onChange={(value) => setScenario(policy.id, { postDebtSalary: value })}
-                  prefix="₪"
-                  step={500}
-                  min={0}
-                />
+                <PartnerSalaryFields policy={policy} partner1={assumptions.partner1Name} partner2={assumptions.partner2Name} update={(update) => setScenario(policy.id, update)} />
+                <NumberField label="Salary start — operating month" value={policy.preDebtStartMonth} onChange={(preDebtStartMonth) => setScenario(policy.id, { preDebtStartMonth })} min={0} max={60} hint="Both partners share this start month while debt remains. After-debt amounts apply once debt is cleared." />
                 <NumberField
                   label="Cash target"
                   value={policy.cashTarget}

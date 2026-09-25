@@ -1,6 +1,6 @@
-import { Card, Chip, DataRow, PageHeader, SectionTitle, StatCard, cx } from '../components/ui';
+import { Card, Chip, DataRow, PageHeader, SectionTitle, StatCard, NumberField, cx } from '../components/ui';
 import { formatCurrency, formatPercent, monthLabel } from '../lib/format';
-import { loanTerms, type MonthRow } from '../model';
+import { loanTerms, startupTotals, type MonthRow } from '../model';
 import { useAppState } from '../state/AppState';
 
 /**
@@ -10,8 +10,9 @@ import { useAppState } from '../state/AppState';
  * when the next lump sum lands and how big it is projected to be.
  */
 export function Financing() {
-  const { assumptions: a, result, selectedScenario, anchorMonth } = useAppState();
+  const { assumptions: a, result, selectedScenario, anchorMonth, setAssumptions } = useAppState();
   const terms = loanTerms(a);
+  const startup = startupTotals(a);
   const months = result.months;
 
   const loanASummary = summariseLoan(months, 'A');
@@ -26,6 +27,16 @@ export function Financing() {
         subtitle={`${formatCurrency(a.loanAPrincipal + a.loanBPrincipal)} borrowed across two loans, with a ${a.graceMonths}-month free grace period.`}
       />
 
+      <Card className="mb-6 p-5">
+        <SectionTitle>Funding sources</SectionTitle>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <NumberField label="Self-financing — owner funds" value={a.selfFinancing} onChange={(selfFinancing) => setAssumptions({ selfFinancing })} prefix="₪" min={0} />
+          <NumberField label="Loan A principal" value={a.loanAPrincipal} onChange={(loanAPrincipal) => setAssumptions({ loanAPrincipal })} prefix="₪" min={0} />
+          <NumberField label="Loan B principal" value={a.loanBPrincipal} onChange={(loanBPrincipal) => setAssumptions({ loanBPrincipal })} prefix="₪" min={0} />
+        </div>
+        <p className="mt-4 text-sm text-muted">Total funding {formatCurrency(startup.totalFinancing)} minus startup allocation {formatCurrency(startup.grossCash)} leaves {formatCurrency(startup.cashHeadroom)} opening cash. Owner funds are equity, with no interest or scheduled repayment. For full self-financing set both loans to zero.</p>
+        {a.loanAPrincipal + a.loanBPrincipal === 0 && <p className="mt-3 text-sm text-muted">No loan payments or debt sweeps. After-debt owner salaries apply from launch.</p>}
+      </Card>
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatCard
           label="Debt remaining"
@@ -42,7 +53,7 @@ export function Financing() {
         <StatCard
           label="Debt-free"
           value={
-            result.debtFreeOperatingMonth === null
+            a.loanAPrincipal + a.loanBPrincipal === 0 ? 'From launch' : result.debtFreeOperatingMonth === null
               ? 'Beyond model'
               : `Op month ${result.debtFreeOperatingMonth}`
           }
