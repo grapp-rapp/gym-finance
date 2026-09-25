@@ -1,3 +1,4 @@
+import { PartnerSalaryFields } from '../components/PartnerSalaryFields';
 import {
   Accordion,
   Button,
@@ -616,21 +617,7 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
               onChange={(employerLoad) => setAssumptions({ employerLoad })}
               decimals={0}
             />
-            <NumberField
-              label={`${a.partner1Name} — pre-debt gross`}
-              value={selectedScenario.preDebtSalary}
-              onChange={(preDebtSalary) => setScenario(selectedScenario.id, { preDebtSalary })}
-              prefix="₪"
-              step={500}
-              hint="Both partners are modelled equally."
-            />
-            <NumberField
-              label="Post-debt gross each"
-              value={selectedScenario.postDebtSalary}
-              onChange={(postDebtSalary) => setScenario(selectedScenario.id, { postDebtSalary })}
-              prefix="₪"
-              step={500}
-            />
+            <PartnerSalaryFields policy={selectedScenario} partner1={a.partner1Name} partner2={a.partner2Name} update={(update) => setScenario(selectedScenario.id, update)} />
           </div>
           <div className="mt-4 rounded-2xl bg-surface-2 p-4">
             <DataRow
@@ -639,15 +626,15 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
             />
             <DataRow
               label={`${a.partner2Name} gross`}
-              value={formatCurrency(selectedScenario.postDebtSalary)}
+              value={formatCurrency(selectedScenario.partner2PostDebtSalary ?? selectedScenario.postDebtSalary)}
             />
             <DataRow
               label={`Employer costs at ${formatPercent(a.employerLoad, 0)}`}
-              value={formatCurrency(selectedScenario.postDebtSalary * 2 * a.employerLoad)}
+              value={formatCurrency((selectedScenario.postDebtSalary + (selectedScenario.partner2PostDebtSalary ?? selectedScenario.postDebtSalary)) * a.employerLoad)}
             />
             <DataRow
               label="Total company cash cost / month"
-              value={formatCurrency(selectedScenario.postDebtSalary * 2 * (1 + a.employerLoad))}
+              value={formatCurrency((selectedScenario.postDebtSalary + (selectedScenario.partner2PostDebtSalary ?? selectedScenario.postDebtSalary)) * (1 + a.employerLoad))}
               emphasis
             />
           </div>

@@ -147,7 +147,7 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
     if (operatingMonth === 1) events.push('REOPEN');
     if (t === a.graceMonths && regularDebtPayment > 0) events.push('DEBT START');
     if (extraDebtPayment > 0) events.push('DEBT SWEEP');
-    if (pay.partner1Gross > 0 && previousMonthHadNoSalary(months)) events.push('SALARY START');
+    if (pay.partner1Gross + pay.partner2Gross > 0 && previousMonthHadNoSalary(months)) events.push('SALARY START');
     if (debtRemaining === 0 && previousDebtRemaining > 0) events.push('DEBT FREE');
     if (operatingMonth > 0 && operatingMonth % 12 === 0) events.push('YEAR END');
 
@@ -216,7 +216,7 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
 
 function previousMonthHadNoSalary(months: MonthRow[]): boolean {
   if (months.length === 0) return true;
-  return months[months.length - 1].partner1Gross === 0;
+  return months[months.length - 1].ownerPayrollTotal === 0;
 }
 
 function buildResult(
@@ -230,7 +230,7 @@ function buildResult(
 ): ScenarioResult {
   const debtFreeRow = months.find((m) => m.debtRemaining === 0) ?? null;
   const primeFreeRow = months.find((m) => m.loanBBalance === 0) ?? null;
-  const salaryRow = months.find((m) => m.partner1Gross > 0 && m.operatingMonth > 0) ?? null;
+  const salaryRow = months.find((m) => m.partner1Gross + m.partner2Gross > 0 && m.operatingMonth > 0) ?? null;
   const operating = months.filter((m) => m.operatingMonth > 0);
   const last = months[months.length - 1];
 
