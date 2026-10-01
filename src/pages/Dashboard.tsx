@@ -1,3 +1,4 @@
+import { PricingSummary } from '../components/PricingSummary';
 import { CashInOutChart, CashVsDebtChart, MembersChart } from '../components/charts';
 import { Callout, Card, Chip, PageHeader, SectionTitle, StatCard, cx } from '../components/ui';
 import { formatCurrency, formatNumber, monthLabel } from '../lib/format';
@@ -234,6 +235,7 @@ export function Dashboard({ navigate }: { navigate: (route: Route) => void }) {
         </Card>
       </div>
 
+      <PricingSummary a={assumptions} />
       <p className="mt-6 text-center text-[13px] text-muted">
         Accounting measures — EBITDA, depreciation, DSCR, taxable income — are kept out of the way on
         the{' '}

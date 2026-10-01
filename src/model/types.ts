@@ -84,16 +84,21 @@ export interface Assumptions {
   yearEndTargets: [number, number, number, number, number];
 
   // --- Pricing -------------------------------------------------------------
-  /** Full access gym + classes, gross per month (Inputs B38). */
-  priceFullAccess: number;
-  /** Single service gym OR classes, gross per month (Inputs B39). */
-  priceSingleService: number;
+  /** Standard recurring monthly membership, gross including VAT. */
+  priceStandard: number;
+  /** Total recurring couple price for two people, gross including VAT. */
+  priceCouple: number;
   /** Soldier / student program, gross per month (Inputs B40). */
   priceSoldier: number;
-  /** Member mix, must sum to 1 (Inputs B41:B43). */
-  mixFullAccess: number;
-  mixSingleService: number;
+  /** Recurring mix by people, not subscriptions; must sum to 1. */
+  mixStandard: number;
+  mixCouple: number;
   mixSoldier: number;
+  /** Separate pass sales, excluded from the recurring member blend and growth. */
+  priceOneMonth: number;
+  priceDayPass: number;
+  oneMonthPassesPerMonth: number;
+  dayPassesPerMonth: number;
   /** Base other income gross per month (Inputs B47). */
   otherIncomeGross: number;
   /** Card / payment processing as a share of gross billings (Inputs B49). */

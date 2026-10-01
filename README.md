@@ -297,3 +297,11 @@ Historical reconciliation retains the original workbook's ILS 75,000 allocation 
 ## Scheduled salary increase
 
 Scenario Lab and Inputs now offer an optional scheduled salary increase while debt remains. Choose an operating month (13 means the start of year two) and replacement gross amounts for each partner. The schedule is disabled by default, preserving existing plans. It applies no earlier than the scenario salary start; after-debt amounts take precedence once debt is cleared. Employer costs, tax, cash and sweep capacity recalculate normally. The schedule is a planning choice, not an automatic affordability trigger. Validation: 234 tests pass (one existing skip), including timing, disabled behavior, independent amounts, debt-free precedence and cash/tax identities; production build passes.
+
+## October 2026 membership products
+
+The live recurring blend uses people, not subscriptions: standard ILS 250 at 85%, soldier/student ILS 175 at 10%, couple ILS 450 for two people (ILS 225 per person) at 5%. The formula yields ILS 241.25 gross/member/month. Prices and mix are editable. One-month sales (ILS 350) add to membership collections; day-pass visits (ILS 35) add to other collections. Both volumes start at zero and are independent of recurring member growth. Pass prices are fixed inputs; the existing annual recurring-price inflation behavior is unchanged. All collections continue through the existing VAT/card-fee/tax/cash logic.
+
+Saved version-two plans migrate only pricing to the new base case once; growth, finance, reserve target, Moatza, salaries, actuals and other income remain intact. Historical workbook reconciliation maps the old secondary per-person fee to a two-person equivalent solely for its old-price comparison.
+
+Validation: 238 tests pass (one existing skipped test), TypeScript and production build pass. Local browser verification confirms product labels, people-based percentages, zero pass volumes and the exact ILS 241.25 blend. PRICING_COMPARISON.json records before/after outputs using identical current defaults and Debt-Max policy (100k target, 360 launch, Moatza off, no pass sales), plus summaries for all four default salary scenarios.

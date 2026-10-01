@@ -63,6 +63,7 @@ export function MonthlyCashFlow() {
         }
       />
 
+      <p className="mb-4 text-sm text-muted">Membership Cash In includes recurring members, Moatza and one-month sales. Other Cash In includes existing other income plus day-pass sales. All collections include VAT.</p>
       <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
         <Chip tone="brand">{selectedScenario.name}</Chip>
         <Chip tone="neutral">Cash target {formatCurrency(selectedScenario.cashTarget)}</Chip>

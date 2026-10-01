@@ -56,8 +56,8 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
     const blendedFee = blendedFeeAt(a, operatingMonth);
 
     const membershipCashIn =
-      operatingMonth === 0 ? 0 : organicBilled * blendedFee + moatza * a.moatzaFee;
-    const otherCashIn = operatingMonth === 0 ? 0 : a.otherIncomeGross;
+      operatingMonth === 0 ? 0 : organicBilled * blendedFee + moatza * a.moatzaFee + a.oneMonthPassesPerMonth * a.priceOneMonth;
+    const otherCashIn = operatingMonth === 0 ? 0 : a.otherIncomeGross + a.dayPassesPerMonth * a.priceDayPass;
     const grossBillings = membershipCashIn + otherCashIn;
 
     // --- Economics ex VAT ("Monthly Base" L-O) ----------------------------

@@ -1,0 +1,104 @@
+{
+  "basis": "Default Debt-Max scenario, 360 launch members, unchanged growth, funding, salaries, Moatza OFF, 100000 target, zero pass sales; previous app pricing 230/200/150 with 85/10/5 mix.",
+  "rows": [
+    {
+      "metric": "Blended monthly membership price",
+      "before": 223,
+      "after": 241.25
+    },
+    {
+      "metric": "Year 1 membership cash collected",
+      "before": 1083780,
+      "after": 1172475
+    },
+    {
+      "metric": "Year 2 membership cash collected",
+      "before": 1422294,
+      "after": 1538692.5
+    },
+    {
+      "metric": "Year 3 membership cash collected",
+      "before": 1786899,
+      "after": 1933136.25
+    },
+    {
+      "metric": "Year 4 membership cash collected",
+      "before": 2049147,
+      "after": 2216846.25
+    },
+    {
+      "metric": "Year 5 membership cash collected",
+      "before": 2213498,
+      "after": 2394647.5
+    },
+    {
+      "metric": "Year 1 ending cash",
+      "before": 100000,
+      "after": 100000
+    },
+    {
+      "metric": "Debt-free operating month",
+      "before": 36,
+      "after": 30
+    },
+    {
+      "metric": "Year 5 ending cash",
+      "before": 1556391.0673811813,
+      "after": 1903118.8504305077
+    }
+  ],
+  "summaries": [
+    {
+      "scenario": "A — Debt-Max",
+      "before": {
+        "year1": 100000,
+        "debtFree": 36,
+        "year5": 1556391.0673811813
+      },
+      "after": {
+        "year1": 100000,
+        "debtFree": 30,
+        "year5": 1903118.8504305077
+      }
+    },
+    {
+      "scenario": "B — Balanced",
+      "before": {
+        "year1": 100000,
+        "debtFree": 42,
+        "year5": 1384871.148128068
+      },
+      "after": {
+        "year1": 100000,
+        "debtFree": 36,
+        "year5": 1789148.103483475
+      }
+    },
+    {
+      "scenario": "C — Earlier Full Owner Pay",
+      "before": {
+        "year1": 100000,
+        "debtFree": 48,
+        "year5": 979403.389579808
+      },
+      "after": {
+        "year1": 100000,
+        "debtFree": 42,
+        "year5": 1443246.2950491086
+      }
+    },
+    {
+      "scenario": "D — Early Balanced",
+      "before": {
+        "year1": 100000,
+        "debtFree": 42,
+        "year5": 1325066.6776913335
+      },
+      "after": {
+        "year1": 100000,
+        "debtFree": 36,
+        "year5": 1730331.8325716069
+      }
+    }
+  ]
+}

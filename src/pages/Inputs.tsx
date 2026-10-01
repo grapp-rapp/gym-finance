@@ -11,7 +11,7 @@ import {
   TextField,
   Toggle,
 } from '../components/ui';
-import { formatCurrency, formatNumber, formatPercent } from '../lib/format';
+import { formatCurrency, formatCurrencyExact, formatNumber, formatPercent } from '../lib/format';
 import {
   blendedMembershipFee,
   loanTerms,
@@ -45,7 +45,7 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
   const opex = operatingCostTotals(a);
   const startup = startupTotals(a);
   const terms = loanTerms(a);
-  const mixTotal = a.mixFullAccess + a.mixSingleService + a.mixSoldier;
+  const mixTotal = a.mixStandard + a.mixCouple + a.mixSoldier;
 
   return (
     <div>
@@ -196,55 +196,59 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
         {/* --- Pricing --------------------------------------------------- */}
         <Accordion
           title="Pricing & other income"
-          summary={`Blended ${formatCurrency(blendedMembershipFee(a))} gross / member / month`}
+          summary={`Recurring blended ${formatCurrencyExact(blendedMembershipFee(a))} gross / member / month`}
         >
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <NumberField
-              label="Full access — gym + classes"
-              value={a.priceFullAccess}
-              onChange={(priceFullAccess) => setAssumptions({ priceFullAccess })}
+              label="Standard Membership · gross / month"
+              value={a.priceStandard}
+              onChange={(priceStandard) => setAssumptions({ priceStandard })}
               prefix="₪"
               step={5}
             />
             <NumberField
-              label="Single service — gym OR classes"
-              value={a.priceSingleService}
-              onChange={(priceSingleService) => setAssumptions({ priceSingleService })}
+              label="Couple Membership · gross / couple"
+              value={a.priceCouple}
+              onChange={(priceCouple) => setAssumptions({ priceCouple })}
               prefix="₪"
               step={5}
             />
             <NumberField
-              label="Soldier / student"
+              label="Soldier / Student · gross / month"
               value={a.priceSoldier}
               onChange={(priceSoldier) => setAssumptions({ priceSoldier })}
               prefix="₪"
               step={5}
             />
             <PercentField
-              label="Full-access mix"
-              value={a.mixFullAccess}
-              onChange={(mixFullAccess) => setAssumptions({ mixFullAccess })}
+              label="Standard membership % of people"
+              value={a.mixStandard}
+              onChange={(mixStandard) => setAssumptions({ mixStandard })}
               max={1}
             />
             <PercentField
-              label="Single-service mix"
-              value={a.mixSingleService}
-              onChange={(mixSingleService) => setAssumptions({ mixSingleService })}
+              label="Couple-member % of people"
+              value={a.mixCouple}
+              onChange={(mixCouple) => setAssumptions({ mixCouple })}
               max={1}
             />
             <PercentField
-              label="Soldier mix"
+              label="Soldier / student % of people"
               value={a.mixSoldier}
               onChange={(mixSoldier) => setAssumptions({ mixSoldier })}
               max={1}
             />
+            <NumberField label="One Month · gross price" value={a.priceOneMonth} onChange={(priceOneMonth) => setAssumptions({ priceOneMonth })} prefix="₪" min={0} />
+            <NumberField label="One-month passes sold per month" value={a.oneMonthPassesPerMonth} onChange={(v) => setAssumptions({ oneMonthPassesPerMonth: Math.round(v) })} min={0} hint="Separate from the recurring blend. Added to Membership Cash In during operation." />
+            <NumberField label="Day Pass · gross price / visit" value={a.priceDayPass} onChange={(priceDayPass) => setAssumptions({ priceDayPass })} prefix="₪" min={0} />
+            <NumberField label="Day passes sold per month" value={a.dayPassesPerMonth} onChange={(v) => setAssumptions({ dayPassesPerMonth: Math.round(v) })} min={0} hint="Added to Other Cash In during operation. Visitors do not count as active members." />
             <NumberField
               label="Other income"
               value={a.otherIncomeGross}
               onChange={(otherIncomeGross) => setAssumptions({ otherIncomeGross })}
               prefix="₪"
               step={100}
-              hint="Partnerships, store, day passes — gross per month."
+              hint="Existing ancillary income, excluding the day-pass sales modeled separately above."
             />
             <PercentField
               label="Card / payment processing"
@@ -259,6 +263,7 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
               hint="Applied at each operating-year boundary."
             />
           </div>
+          <p className="mt-3 text-sm text-muted">All prices include VAT. Mix percentages count people: each couple is two members at {formatCurrencyExact(a.priceCouple / 2)} each. A 5% couple-member mix means 5% of people, not 5% of subscriptions. Pass sales are separate; recurring member growth is unchanged.</p>
           {Math.abs(mixTotal - 1) > 0.0001 && (
             <div className="mt-4">
               <Callout tone="warn">
@@ -269,8 +274,8 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
           )}
           <div className="mt-4 rounded-2xl bg-surface-2 p-4">
             <DataRow
-              label="Blended membership fee"
-              value={`${formatCurrency(blendedMembershipFee(a))} gross`}
+              label="Calculated recurring blended gross revenue / member"
+              value={`${formatCurrencyExact(blendedMembershipFee(a))} gross`}
               emphasis
             />
           </div>

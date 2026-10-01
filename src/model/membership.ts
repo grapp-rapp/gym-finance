@@ -65,12 +65,12 @@ export function moatzaMembersAt(a: Assumptions, operatingMonth: number): number 
 
 /**
  * Blended organic membership fee, gross of VAT.
- * Reference: Inputs B44 — weighted average of the three price tiers.
+ * Weighted average by recurring people: each couple contributes two members at half the subscription price per person.
  */
 export function blendedMembershipFee(a: Assumptions): number {
   return (
-    a.priceFullAccess * a.mixFullAccess +
-    a.priceSingleService * a.mixSingleService +
+    a.priceStandard * a.mixStandard +
+    (a.priceCouple / 2) * a.mixCouple +
     a.priceSoldier * a.mixSoldier
   );
 }

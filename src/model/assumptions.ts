@@ -46,12 +46,16 @@ export const DEFAULT_ASSUMPTIONS: Assumptions = {
   capacity: 850,
   yearEndTargets: [450, 600, 725, 800, 850],
 
-  priceFullAccess: 230,
-  priceSingleService: 200,
-  priceSoldier: 150,
-  mixFullAccess: 0.85,
-  mixSingleService: 0.1,
-  mixSoldier: 0.05,
+  priceStandard: 250,
+  priceCouple: 450,
+  priceSoldier: 175,
+  mixStandard: 0.85,
+  mixCouple: 0.05,
+  mixSoldier: 0.1,
+  priceOneMonth: 350,
+  priceDayPass: 35,
+  oneMonthPassesPerMonth: 0,
+  dayPassesPerMonth: 0,
   otherIncomeGross: 6500,
   cardFeeRate: 0.01,
   priceInflation: 0,
@@ -166,6 +170,9 @@ export const NO_SALARY_POLICY: ScenarioPolicy = {
 /** Historical workbook inputs used only for parity checks. */
 export const WORKBOOK_ASSUMPTIONS: Assumptions = {
   ...DEFAULT_ASSUMPTIONS, launchMembers: 238, selfFinancing: 0,
+  // Map the historical secondary per-person fee to a two-person total for parity only.
+  priceStandard: 230, priceSoldier: 150, priceCouple: 400,
+  mixStandard: 0.85, mixSoldier: 0.05, mixCouple: 0.1,
   startupCosts: [...DEFAULT_STARTUP_COSTS, { id: 'historical-reserve-allocation', name: 'Historical workbook reserve deduction', exVat: 75000, vatable: false, note: 'Historical reconciliation only; not an expense in the live plan.' }],
 };
 export const WORKBOOK_SCENARIOS = DEFAULT_SCENARIOS.map(s => ({ ...s, cashTarget: 150000 }));
