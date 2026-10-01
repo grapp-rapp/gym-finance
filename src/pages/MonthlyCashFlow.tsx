@@ -63,7 +63,7 @@ export function MonthlyCashFlow() {
         }
       />
 
-      <p className="mb-4 text-sm text-muted">Membership Cash In includes recurring members, Moatza and one-month sales. Other Cash In includes existing other income plus day-pass sales. All collections include VAT.</p>
+      <p className="mb-4 text-sm text-muted">Membership Cash In includes recurring members, Moatza and one-month sales. Other Cash In includes existing other income plus day-pass sales. All collections include VAT. Operating VAT is settled in the same month and is already included in Operating out; the VAT columns are a breakdown, not extra cash flows.</p>
       <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
         <Chip tone="brand">{selectedScenario.name}</Chip>
         <Chip tone="neutral">Cash target {formatCurrency(selectedScenario.cashTarget)}</Chip>
@@ -85,6 +85,7 @@ export function MonthlyCashFlow() {
                 <ColGroupHead span={3} label="Where we are" />
                 <ColGroupHead span={4} label="Cash in" tone="good" />
                 <ColGroupHead span={8} label="Cash out" tone="bad" />
+                <ColGroupHead span={3} label="Operating VAT · already included" />
                 <ColGroupHead span={5} label="Result" tone="brand" />
                 <th className="border-b border-line bg-surface-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted">
                   Event
@@ -99,7 +100,7 @@ export function MonthlyCashFlow() {
                 <Th right>Members</Th>
                 <Th right>Membership</Th>
                 <Th right>Other</Th>
-                <Th right>VAT refund</Th>
+                <Th right>Startup VAT refund</Th>
                 <Th right strong>Total in</Th>
                 <Th right>Operating out</Th>
                 <Th right>Loan payment</Th>
@@ -109,6 +110,9 @@ export function MonthlyCashFlow() {
                 <Th right>{assumptions.partner2Name}</Th>
                 <Th right>Employer costs</Th>
                 <Th right strong>Total out</Th>
+                <Th right>VAT collected</Th>
+                <Th right>Expense VAT credits</Th>
+                <Th right>Net VAT · pay / (refund)</Th>
                 <Th right strong>Net change</Th>
                 <Th right>Opening cash</Th>
                 <Th right strong>Ending cash</Th>
@@ -280,6 +284,9 @@ function MonthTableRow({
       <Td tone="muted">{formatCurrency(month.employerCosts)}</Td>
       <Td strong>{formatCurrency(month.totalCashOut)}</Td>
 
+      <Td>{formatCurrency(month.vatCollected)}</Td>
+      <Td>{formatCurrency(month.expenseVatCredits)}</Td>
+      <Td tone={month.netOperatingVat < 0 ? 'good' : 'muted'}>{formatCurrency(month.netOperatingVat)}</Td>
       <Td tone={month.netCashChange < 0 ? 'bad' : 'good'} strong={false} className="font-semibold">
         {formatCurrency(month.netCashChange)}
       </Td>
@@ -480,6 +487,15 @@ function MonthDetail({
           </section>
         </div>
 
+        <section className="mt-5 rounded-2xl border border-line p-4">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-brand">Operating VAT · same-month settlement</h3>
+          <DataRow label="VAT collected from customers" value={formatCurrency(month.vatCollected, { showZero: true })} />
+          <DataRow label="Expense VAT credits · eligible invoices and card fees" value={formatCurrency(month.expenseVatCredits, { showZero: true })} />
+          <DataRow label={month.netOperatingVat < 0 ? 'Net operating VAT refund' : 'Net operating VAT payment'} value={formatCurrency(Math.abs(month.netOperatingVat), { showZero: true })} tone={month.netOperatingVat < 0 ? 'good' : 'neutral'} emphasis />
+          <DataRow label="Operating invoices / payroll / card fees · gross" value={formatCurrency(month.operatingGrossCashOut)} />
+          <DataRow label="Operating cash out · after VAT settlement" value={formatCurrency(month.operatingCashOut)} emphasis />
+          <p className="mt-3 text-sm text-muted">Net VAT equals collected VAT minus eligible expense credits. A payment increases operating cash out; a refund reduces it. This is already included above and does not add another deduction or refund. Startup VAT is separate. Closure costs are entered ex VAT, so no regular invoice credits are inferred during build months.</p>
+        </section>
         <div className="mt-5 rounded-2xl bg-surface-2 p-4">
           <DataRow label="Opening bank cash" value={formatCurrency(month.openingCash)} />
           <DataRow

@@ -217,6 +217,12 @@ export interface MonthRow {
   ebitda: number;
   depreciation: number;
 
+  /** Operating VAT breakdown: positive settlement is payment; negative is refund. */
+  vatCollected: number;
+  expenseVatCredits: number;
+  netOperatingVat: number;
+  operatingGrossCashOut: number;
+
   // Cash out
   /** Gross collections less EBITDA: day-to-day cash burden including the net VAT effect. */
   operatingCashOut: number;

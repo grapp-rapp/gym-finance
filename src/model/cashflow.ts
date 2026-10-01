@@ -66,6 +66,14 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
     const coreOpexExVat = coreOpexAt(a, operatingMonth, opex.monthlyExVat);
     const ebitda = netRevenueExVat - cardFeesExVat - coreOpexExVat;
 
+    // Same-month VAT settlement is already included in operatingCashOut below.
+    // Closure costs are supplied ex VAT; no invoice VAT is inferred for build months.
+    const vatCollected = grossBillings - netRevenueExVat;
+    const expenseVatCredits = operatingMonth === 0 ? 0 :
+      opex.monthlyVat * Math.pow(1 + a.opexInflation, Math.max(0, operatingYear - 1)) +
+      grossBillings * a.cardFeeRate - cardFeesExVat;
+    const netOperatingVat = vatCollected - expenseVatCredits;
+
     const startupVatRefund = t === a.buildVatRefundMonth ? startup.reclaimableVat : 0;
 
     // --- Scheduled debt service ("Owner Pay" I-L) -------------------------
@@ -134,6 +142,7 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
     // cash burden (opex, card fees and the net VAT effect) expressed as one number, so
     // cash in − cash out reconciles exactly to the change in bank cash.
     const operatingCashOut = grossBillings - ebitda;
+    const operatingGrossCashOut = operatingCashOut - netOperatingVat;
     const extraDebtPayment = extraToLoanB + extraToLoanA;
     const totalCashIn = membershipCashIn + otherCashIn + startupVatRefund;
     const totalCashOut =
@@ -177,6 +186,10 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
       ebitda,
       depreciation,
       operatingCashOut,
+      operatingGrossCashOut,
+      vatCollected,
+      expenseVatCredits,
+      netOperatingVat,
       loanAScheduled,
       loanBScheduled,
       loanBInterest,

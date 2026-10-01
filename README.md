@@ -305,3 +305,7 @@ The live recurring blend uses people, not subscriptions: standard ILS 250 at 85%
 Saved version-two plans migrate only pricing to the new base case once; growth, finance, reserve target, Moatza, salaries, actuals and other income remain intact. Historical workbook reconciliation maps the old secondary per-person fee to a two-person equivalent solely for its old-price comparison.
 
 Validation: 238 tests pass (one existing skipped test), TypeScript and production build pass. Local browser verification confirms product labels, people-based percentages, zero pass volumes and the exact ILS 241.25 blend. PRICING_COMPARISON.json records before/after outputs using identical current defaults and Debt-Max policy (100k target, 360 launch, Moatza off, no pass sales), plus summaries for all four default salary scenarios.
+
+## Operating VAT visibility
+
+Monthly cash flow now displays VAT collected, eligible expense VAT credits (including modeled card-fee VAT), and net operating VAT payment/refund. Positive net VAT is payable, negative is a refund. The month detail reconciles gross operating invoices/payroll/card costs plus VAT settlement to the existing Operating Cash Out. These are informational breakdowns of the existing same-month treatment and do not change cash, tax, debt sweeps or timing. Startup VAT remains separate. Closure costs are supplied ex VAT and have no inferred regular invoice credit. Validation: 240 tests pass (one existing skip), historical parity and pricing comparison are unchanged, production build passes.
