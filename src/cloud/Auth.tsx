@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type FormEvent } from 'react';
+import { isAuthApiError } from '@neondatabase/auth';
 import { makeAuthClient, type AuthClient } from './authClient';
 export type { AuthClient } from './authClient';
 interface Account { id: string; email: string; name: string }
@@ -45,6 +46,11 @@ function AccountDialog({ client, resetToken, close }: { client: AuthClient; rese
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [failed, setFailed] = useState(false);
+  const showFailure = (error: { code?: string; message?: string }) => {
+    if (mode === 'login' && ['EMAIL_NOT_VERIFIED', 'email_not_confirmed'].includes(error.code ?? '')) {
+      setMode('verify'); setPassword(''); setMessage('Enter the verification code from your email, or request a new code below.');
+    } else { setFailed(true); setMessage(error.message ?? 'Please try again.'); }
+  };
   const submit = async (event: FormEvent) => {
     event.preventDefault(); setBusy(true); setMessage(''); setFailed(false);
     try {
@@ -53,11 +59,7 @@ function AccountDialog({ client, resetToken, close }: { client: AuthClient; rese
         : mode === 'signup' ? await client.signUp.email({ email, password, name, callbackURL: window.location.origin })
         : mode === 'forgot' ? await client.requestPasswordReset({ email, redirectTo: window.location.origin })
         : await client.resetPassword({ newPassword: password, token: resetToken ?? '' });
-      if (result.error) {
-        if (mode === 'login' && result.error.code === 'EMAIL_NOT_VERIFIED') {
-          setMode('verify'); setPassword(''); setMessage('Enter the verification code from your email, or request a new code below.');
-        } else { setFailed(true); setMessage(result.error.message ?? 'Please try again.'); }
-      }
+      if (result.error) showFailure(result.error);
       else if (mode === 'forgot') setMessage('If an account exists, a password reset email has been sent.');
       else if (mode === 'reset') { window.history.replaceState(null, '', '/#/dashboard'); setMode('login'); setMessage('Password updated. You can now sign in.'); }
       else if (mode === 'signup') {
@@ -69,7 +71,10 @@ function AccountDialog({ client, resetToken, close }: { client: AuthClient; rese
         if (session.data?.user) close();
         else { setMode('login'); setMessage('Email verified. You can now sign in.'); }
       } else close();
-    } catch { setFailed(true); setMessage('Could not connect. Please try again.'); }
+    } catch (error) {
+      if (isAuthApiError(error)) showFailure(error);
+      else { setFailed(true); setMessage('Could not connect. Please try again.'); }
+    }
     finally { setBusy(false); }
   };
   const resend = async () => {
@@ -77,7 +82,7 @@ function AccountDialog({ client, resetToken, close }: { client: AuthClient; rese
     try {
       const result = await client.emailOtp.sendVerificationOtp({ email, type: 'email-verification' });
       setFailed(!!result.error); setMessage(result.error?.message ?? 'A new verification code has been sent.');
-    } catch { setFailed(true); setMessage('Could not send a code. Please try again.'); }
+    } catch (error) { setFailed(true); setMessage(isAuthApiError(error) ? error.message : 'Could not send a code. Please try again.'); }
     finally { setBusy(false); }
   };
   const title = mode === 'verify' ? 'Verify your email' : mode === 'signup' ? 'Create your account' : mode === 'forgot' ? 'Reset your password' : mode === 'reset' ? 'Choose a new password' : 'Sign in to your model';
