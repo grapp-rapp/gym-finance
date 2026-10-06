@@ -11,6 +11,8 @@ import { PlanVsActual } from './pages/PlanVsActual';
 import { Reconciliation } from './pages/Reconciliation';
 import { ScenarioLab } from './pages/ScenarioLab';
 import { AppStateProvider, useAppState } from './state/AppState';
+import { AccountProvider } from './cloud/Auth';
+import { SavedModelProvider, AccountBar } from './cloud/SavedModel';
 
 const NAV: Array<{ route: Route; label: string; short: string; icon: string }> = [
   { route: 'dashboard', label: 'Dashboard', short: 'Home', icon: '◧' },
@@ -25,9 +27,11 @@ const NAV: Array<{ route: Route; label: string; short: string; icon: string }> =
 
 export default function App() {
   return (
-    <AppStateProvider>
-      <Shell />
-    </AppStateProvider>
+    <AccountProvider>
+      <SavedModelProvider>
+        <AppStateProvider><Shell /></AppStateProvider>
+      </SavedModelProvider>
+    </AccountProvider>
   );
 }
 
@@ -43,6 +47,7 @@ function Shell() {
 
   return (
     <div className="min-h-dvh bg-canvas">
+      <AccountBar />
       {/* --- Top bar ------------------------------------------------------ */}
       <header className="no-print sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur">
         <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-3 sm:px-6">

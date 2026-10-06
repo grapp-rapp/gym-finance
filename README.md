@@ -309,3 +309,17 @@ Validation: 238 tests pass (one existing skipped test), TypeScript and productio
 ## Operating VAT visibility
 
 Monthly cash flow now displays VAT collected, eligible expense VAT credits (including modeled card-fee VAT), and net operating VAT payment/refund. Positive net VAT is payable, negative is a refund. The month detail reconciles gross operating invoices/payroll/card costs plus VAT settlement to the existing Operating Cash Out. These are informational breakdowns of the existing same-month treatment and do not change cash, tax, debt sweeps or timing. Startup VAT remains separate. Closure costs are supplied ex VAT and have no inferred regular invoice credit. Validation: 240 tests pass (one existing skip), historical parity and pricing comparison are unchanged, production build passes.
+
+
+## Account-based cloud saving
+
+The financial engine and all default assumptions are unchanged. Neon Postgres stores each authenticated user’s complete model (assumptions, owner salary scenarios, selected scenario, calendar anchor, plan/actual mode and actual entries). Managed Neon Auth handles email/password sign-in, account creation and password reset. Database credentials remain in server-side Vercel environment variables; browser requests use short-lived signed tokens verified against the gym auth service.
+
+On the first sign-in from the original browser, the existing local setup is uploaded if the account has no model. The original browser key remains intact. If the account and browser both have different models, a visible choice is required; neither silently overwrites the other. A per-account device cache preserves pending offline edits. Autosave uses optimistic revision checks; competing edits produce a choice with downloadable copies. Clean devices refresh on focus, reconnection and every 30 seconds. Sign-out waits for confirmed saving. A Download backup button works both before and after sign-in.
+
+Setup: connect the gym-finance-db Neon Free resource to gym-finance in Vercel. Required server variables are DATABASE_URL and NEON_AUTH_BASE_URL; NEON_AUTH_JWKS_URL is optional (defaults to the auth URL plus /.well-known/jwks.json). Add https://gym-finance-delta.vercel.app as a trusted auth domain in Neon. Preview origins must be added individually if they are used for testing. The two private model tables are created idempotently on the first authenticated request. Successful snapshots are retained up to the latest 30 revisions per account; device conflict backups retain five copies. No database secret is included in the client bundle or committed.
+
+Sign in initially on the browser containing the existing setup and wait for “Saved to your account” before using another computer. Account models are private and independent; partner sharing is not enabled by this change. Local-only use remains available without sign-in, clearly labelled “Saved in this browser”. If browser backup storage is blocked or full, the app displays that limitation.
+
+Validation covers full import and unchanged financial outputs, second-device loading, in-flight edits, outages/retries, initial-load failure, stale-cache conflicts, automatic refresh and account-scoped API authorization.
+

@@ -16,12 +16,13 @@ export default defineConfig({
         // first screen, so keep it in its own chunk the browser can cache separately.
         manualChunks: {
           charts: ['recharts'],
+          auth: ['@neondatabase/auth', '@neondatabase/auth/react/adapters'],
         },
       },
     },
   },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.test.ts', 'tests/**/*.test.mjs'],
   },
 });
