@@ -82,7 +82,8 @@ export class CloudSync {
     } catch (error) {
       if (this.stopped) return;
       console.warn('Cloud model load failed:', error instanceof Error ? error.message : 'Connection unavailable');
-      this.publish({ ready: !!cache, status: 'error', message: cache ? 'Cloud unavailable. Your cached model is safe; changes will wait for reconnection.' : 'Could not load your cloud model. Your browser setup is safe. Please retry.' });
+      const reason = error instanceof Error ? error.message.slice(0, 180) : 'Connection unavailable';
+      this.publish({ ready: !!cache, status: 'error', message: cache ? 'Cloud unavailable. Your cached model is safe; changes will wait for reconnection.' : `Could not load your cloud model. ${reason} Your browser setup is safe. Please retry.` });
       if (error instanceof ConflictError) this.conflict(error.record);
     }
   }
