@@ -1,0 +1,20 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { defaultState } from '../src/state/persistence';
+import { validPlan } from '../server/validation.mjs';
+vi.mock('jose', () => ({ createRemoteJWKSet: vi.fn(), jwtVerify: vi.fn() }));
+vi.mock('../server/database.mjs', () => ({ readModel: vi.fn(), saveModel: vi.fn() }));
+import { jwtVerify } from 'jose';
+import { readModel, saveModel } from '../server/database.mjs';
+import handler from '../api/model.mjs';
+const res = () => ({ statusCode: 200, data: null, setHeader: vi.fn(), status(n) { this.statusCode = n; return this; }, json(data) { this.data = data; return this; } });
+beforeEach(() => { vi.clearAllMocks(); process.env.NEON_AUTH_BASE_URL = 'https://example.neonauth.neon.build/neondb/auth'; process.env.DATABASE_URL = 'test'; jwtVerify.mockResolvedValue({ payload: { sub: 'account-a' } }); });
+describe('private model API', () => {
+  it('rejects unsigned requests before touching financial data', async () => { const r = res(); await handler({ method:'GET', headers:{} },r); expect(r.statusCode).toBe(401); expect(readModel).not.toHaveBeenCalled(); });
+  it('rejects invalid signatures', async () => { jwtVerify.mockRejectedValueOnce(new Error()); const r=res(); await handler({method:'GET',headers:{authorization:'Bearer bad'}},r); expect(r.statusCode).toBe(401); expect(readModel).not.toHaveBeenCalled(); });
+  it('reads only the verified account, ignoring a requested user ID', async () => { readModel.mockResolvedValue(null); const r=res(); await handler({method:'GET',headers:{authorization:'Bearer token'}, query:{userId:'account-b'}},r); expect(readModel).toHaveBeenCalledWith('account-a'); expect(r.data).toEqual({model:null}); });
+  it('accepts the full current model, including actual notes and independent salaries', async () => { const state=structuredClone(defaultState()); state.actuals=[{timelineMonth:3,note:'VAT received',endingCash:-5000}]; state.scenarios[0].partner2PreDebtSalary=5000; expect(validPlan(state)).toBe(true); saveModel.mockResolvedValue({state,revision:2}); const r=res(); await handler({method:'PUT',headers:{authorization:'Bearer token'},body:{state,revision:1,userId:'account-b'}},r); expect(saveModel).toHaveBeenCalledWith('account-a',state,1); expect(r.statusCode).toBe(200); });
+  it('returns the current account model on stale-revision conflict', async () => { saveModel.mockResolvedValue(null); readModel.mockResolvedValue({state:defaultState(),revision:4}); const r=res(); await handler({method:'PUT',headers:{authorization:'Bearer token'},body:{state:defaultState(),revision:1}},r); expect(r.statusCode).toBe(409); expect(r.data.model.revision).toBe(4); });
+  it('rejects malformed and oversized data without saving', async () => { for(const body of [{state:{version:3},revision:0},{state:defaultState(),revision:-1},{state:{...defaultState(),anchorMonth:'2026-99'},revision:0}]) {const r=res();await handler({method:'PUT',headers:{authorization:'Bearer token'},body},r);expect(r.statusCode).toBe(400);} expect(saveModel).not.toHaveBeenCalled(); });
+  it('rejects invalid numeric shapes and prototype keys', () => { const s=structuredClone(defaultState()); s.assumptions.operatingMonths=100000; expect(validPlan(s)).toBe(false); expect(validPlan(JSON.parse('{"version":3,"__proto__":{}}'))).toBe(false); });
+  it('never returns internal database errors or credentials', async () => { readModel.mockRejectedValueOnce(new Error('postgres://secret')); const r=res(); await handler({method:'GET',headers:{authorization:'Bearer token'}},r); expect(r.statusCode).toBe(503); expect(JSON.stringify(r.data)).not.toContain('secret'); });
+});

@@ -1,12 +1,10 @@
-import { migratePricingPlan } from './pricingMigration';
-import { migrateReservePlan } from './reserveMigration';
+import { defaultState, type PlanMode } from './persistence';
+import { useSavedModel } from '../cloud/SavedModel';
 import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useState,
   type ReactNode,
 } from 'react';
 import {
@@ -27,57 +25,11 @@ import {
  * scenario is selected, and any actuals they have entered. The model itself stays pure —
  * this layer only holds inputs and memoises the results.
  *
- * Persistence is localStorage today. The shape is deliberately a single serialisable
- * object so swapping in a cloud datastore later is a change to two functions, not the app.
+ * SavedModelProvider handles browser persistence and authenticated cloud synchronization.
+ * This layer exposes model actions and computes results; the financial math is unchanged.
  */
 
-const STORAGE_KEY = 'shaar-binyamin-gym-model/v1';
-const STORAGE_VERSION = 3;
-
-export type PlanMode = 'plan' | 'actual';
-
-interface PersistedState {
-  version: number;
-  assumptions: Assumptions;
-  scenarios: ScenarioPolicy[];
-  selectedScenarioId: string;
-  actuals: ActualEntry[];
-  /** Calendar month that timeline month 0 corresponds to, e.g. "2026-09". */
-  anchorMonth: string;
-  mode: PlanMode;
-}
-
-function defaultState(): PersistedState {
-  return {
-    version: STORAGE_VERSION,
-    assumptions: DEFAULT_ASSUMPTIONS,
-    scenarios: DEFAULT_SCENARIOS,
-    selectedScenarioId: 'A',
-    actuals: [],
-    anchorMonth: '2026-09',
-    mode: 'plan',
-  };
-}
-
-function load(): PersistedState {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return defaultState();
-    const parsed = JSON.parse(raw) as Partial<PersistedState>;
-    if (parsed.version !== 1 && parsed.version !== 2 && parsed.version !== STORAGE_VERSION) return defaultState();
-    const base = defaultState();
-    return migratePricingPlan(migrateReservePlan({
-      ...base,
-      ...parsed,
-      // Merge assumptions field-by-field so a saved state from an older build that
-      // predates a new input still gets a sensible default for it.
-      assumptions: { ...base.assumptions, ...(parsed.assumptions ?? {}) },
-      scenarios: parsed.scenarios?.length ? parsed.scenarios : base.scenarios,
-    }));
-  } catch {
-    return defaultState();
-  }
-}
+export type { PlanMode } from './persistence';
 
 interface AppStateValue {
   assumptions: Assumptions;
@@ -110,15 +62,7 @@ interface AppStateValue {
 const AppStateContext = createContext<AppStateValue | null>(null);
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<PersistedState>(load);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch {
-      // Private browsing or a full quota — the app still works, it just will not persist.
-    }
-  }, [state]);
+  const { state, setState } = useSavedModel();
 
   const selectedScenario = useMemo(
     () => state.scenarios.find((s) => s.id === state.selectedScenarioId) ?? state.scenarios[0],
