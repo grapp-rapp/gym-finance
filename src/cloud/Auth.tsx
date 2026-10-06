@@ -1,9 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type FormEvent } from 'react';
-import { createAuthClient } from '@neondatabase/auth';
-import { BetterAuthReactAdapter } from '@neondatabase/auth/react/adapters';
-
-export const makeAuthClient = (url: string) => createAuthClient(url, { adapter: BetterAuthReactAdapter() });
-export type AuthClient = ReturnType<typeof makeAuthClient>;
+import { makeAuthClient, type AuthClient } from './authClient';
+export type { AuthClient } from './authClient';
 interface Account { id: string; email: string; name: string }
 interface AuthValue { client: AuthClient | null; user: Account | null; checking: boolean; open: () => void }
 const AuthContext = createContext<AuthValue>({ client: null, user: null, checking: false, open: () => {} });

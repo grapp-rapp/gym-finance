@@ -1,13 +1,13 @@
-import type { AuthClient } from './Auth';
+import { getAuthToken, type AuthClient } from './authClient';
 import { ConflictError, type CachedModel, type CloudRecord, type SyncStorage, type SyncTransport } from '../state/cloudSync';
 import { decodeState, defaultState, LEGACY_STORAGE_KEY, type PersistedState } from '../state/persistence';
 
 export function cloudTransport(client: AuthClient): SyncTransport {
   async function request(method: string, body?: unknown) {
-    const { data, error } = await client.token();
-    if (error || !data?.token) throw new Error('Please sign in again.');
+    const token = await getAuthToken(client);
+    if (!token) throw new Error('Please sign in again.');
     const response = await fetch('/api/model', {
-      method, headers: { Authorization: `Bearer ${data.token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      method, headers: { Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
       body: body ? JSON.stringify(body) : undefined,
       signal: AbortSignal.timeout(15000), cache: 'no-store',
     });
