@@ -70,6 +70,7 @@ export function AccountBar() {
       <div className="flex flex-wrap items-center gap-3">{user && <span className="max-w-52 truncate text-muted">{user.email}</span>}
         {(sync?.status === 'offline' || sync?.status === 'error') && <button onClick={() => { void manager?.refresh(); }} className="text-brand">Retry saving</button>}
         <button className="text-brand" onClick={() => downloadBackup(state)}>Download backup</button>
+        {user && <button className="text-brand" onClick={open}>Change password</button>}
         {user ? <button className="text-brand" onClick={() => { void signOut(); }}>Sign out</button> : client ? <button className="rounded-lg bg-brand px-3 py-1.5 font-medium text-white" onClick={open}>Sign in to sync</button> : <span className="text-muted">Cloud connection unavailable</span>}
       </div>
     </div>
