@@ -17,7 +17,8 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
     fetch('/api/config', { signal: controller.signal }).then(r => r.ok ? r.json() : null).then(config => {
-      if (!cancelled && config?.authUrl) setClient(makeAuthClient(config.authUrl));
+      // The SDK client is a callable proxy, so wrap it instead of passing it as a React updater.
+      if (!cancelled && config?.authUrl) setClient(() => makeAuthClient(config.authUrl));
     }).catch(() => {}).finally(() => { clearTimeout(timeout); if (!cancelled) setChecking(false); });
     return () => { cancelled = true; controller.abort(); clearTimeout(timeout); };
   }, []);
