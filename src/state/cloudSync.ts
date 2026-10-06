@@ -81,6 +81,7 @@ export class CloudSync {
       }
     } catch (error) {
       if (this.stopped) return;
+      console.warn('Cloud model load failed:', error instanceof Error ? error.message : 'Connection unavailable');
       this.publish({ ready: !!cache, status: 'error', message: cache ? 'Cloud unavailable. Your cached model is safe; changes will wait for reconnection.' : 'Could not load your cloud model. Your browser setup is safe. Please retry.' });
       if (error instanceof ConflictError) this.conflict(error.record);
     }
@@ -117,6 +118,7 @@ export class CloudSync {
       this.cache();
       try { this.storage.claimLegacy(); } catch { this.publish({ storageWarning: true }); }
     } catch (error) {
+      console.warn('Cloud model save failed:', error instanceof Error ? error.message : 'Connection unavailable');
       if (error instanceof ConflictError) this.conflict(error.record);
       else this.publish({ status: 'offline', message: 'Not saved to cloud yet. Changes are kept on this device and will retry automatically.' });
     } finally {
