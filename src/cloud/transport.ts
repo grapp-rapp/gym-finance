@@ -1,6 +1,6 @@
 import type { AuthClient } from './Auth';
 import { ConflictError, type CachedModel, type CloudRecord, type SyncStorage, type SyncTransport } from '../state/cloudSync';
-import { decodeState, LEGACY_STORAGE_KEY, type PersistedState } from '../state/persistence';
+import { decodeState, defaultState, LEGACY_STORAGE_KEY, type PersistedState } from '../state/persistence';
 
 export function cloudTransport(client: AuthClient): SyncTransport {
   async function request(method: string, body?: unknown) {
@@ -44,7 +44,10 @@ export function browserStorage(userId: string): SyncStorage {
       const owner = localStorage.getItem(claimKey);
       if (owner && owner !== userId) return null;
       const raw = localStorage.getItem(LEGACY_STORAGE_KEY);
-      return raw ? decodeState(JSON.parse(raw)) : null;
+      if (!raw) return null;
+      const state = decodeState(JSON.parse(raw));
+      // Opening a fresh browser writes defaults locally; those are not an existing user setup.
+      return JSON.stringify(state) === JSON.stringify(defaultState()) ? null : state;
     },
     claimLegacy() { if (!localStorage.getItem(claimKey)) localStorage.setItem(claimKey, userId); },
   };
