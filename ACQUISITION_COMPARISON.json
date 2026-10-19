@@ -22,13 +22,13 @@
       "monthlyRevenueExVat": 62881.35593220339,
       "monthlyTradingCashBeforeDebtAndTax": 678.8135593220286,
       "monthlyCashAfterScheduledDebtBeforeTax": -9154.94659975885,
-      "year1EndingCash": 139717.11864406778,
+      "year1EndingCash": 145942.37288135593,
       "debtFreeOperatingMonth": null,
-      "year5EndingCash": -299720.3181443576,
-      "lowestBankCash": -299720.3181443576,
-      "firstBelowTarget": 1,
+      "year5EndingCash": -293495.06390706945,
+      "lowestBankCash": -293495.06390706945,
+      "firstBelowTarget": 18,
       "annualMembershipCash": [
-        882980,
+        890400,
         890400,
         890400,
         890400,
@@ -41,13 +41,13 @@
       "monthlyRevenueExVat": 66025.42372881356,
       "monthlyTradingCashBeforeDebtAndTax": 3791.440677966086,
       "monthlyCashAfterScheduledDebtBeforeTax": -6042.319481114793,
-      "year1EndingCash": 173379.4103493277,
+      "year1EndingCash": 178412.52840017507,
       "debtFreeOperatingMonth": null,
-      "year5EndingCash": -180161.1625865968,
-      "lowestBankCash": -180161.1625865968,
+      "year5EndingCash": -180370.09027829306,
+      "lowestBankCash": -180370.09027829306,
       "firstBelowTarget": 19,
       "annualMembershipCash": [
-        927129,
+        934920,
         934920,
         934920,
         934920,
@@ -60,13 +60,13 @@
       "monthlyRevenueExVat": 69169.49152542373,
       "monthlyTradingCashBeforeDebtAndTax": 6904.0677966101575,
       "monthlyCashAfterScheduledDebtBeforeTax": -2929.6923624707215,
-      "year1EndingCash": 201900.41263746313,
+      "year1EndingCash": 207173.20297644616,
       "debtFreeOperatingMonth": null,
-      "year5EndingCash": -81279.66141791637,
-      "lowestBankCash": -81279.66141791637,
+      "year5EndingCash": -81498.53804731256,
+      "lowestBankCash": -81498.53804731256,
       "firstBelowTarget": 19,
       "annualMembershipCash": [
-        971278,
+        979440,
         979440,
         979440,
         979440,
@@ -79,13 +79,13 @@
       "monthlyRevenueExVat": 72313.5593220339,
       "monthlyTradingCashBeforeDebtAndTax": 10016.69491525423,
       "monthlyCashAfterScheduledDebtBeforeTax": 182.93475617335025,
-      "year1EndingCash": 230421.41492559874,
-      "debtFreeOperatingMonth": 58,
-      "year5EndingCash": 44695.267872393706,
-      "lowestBankCash": 23984.81104444755,
+      "year1EndingCash": 235933.87755271737,
+      "debtFreeOperatingMonth": 57,
+      "year5EndingCash": 50922.14321174177,
+      "lowestBankCash": 25889.24280606564,
       "firstBelowTarget": 19,
       "annualMembershipCash": [
-        1015427,
+        1023960,
         1023960,
         1023960,
         1023960,
@@ -98,13 +98,13 @@
       "monthlyRevenueExVat": 75457.62711864407,
       "monthlyTradingCashBeforeDebtAndTax": 13129.322033898301,
       "monthlyCashAfterScheduledDebtBeforeTax": 3295.561874817422,
-      "year1EndingCash": 258942.4172137344,
+      "year1EndingCash": 264694.5521289886,
       "debtFreeOperatingMonth": 51,
-      "year5EndingCash": 194217.66684597952,
+      "year5EndingCash": 200578.8467842709,
       "lowestBankCash": 100000,
       "firstBelowTarget": null,
       "annualMembershipCash": [
-        1059576,
+        1068480,
         1068480,
         1068480,
         1068480,
@@ -115,21 +115,21 @@
   "retentionCases": [
     {
       "retainedByMonth12": 1,
-      "year1Cash": 139717.11864406778,
-      "year5Cash": -299720.3181443576,
-      "lowestCash": -299720.3181443576
+      "year1Cash": 145942.37288135593,
+      "year5Cash": -293495.06390706945,
+      "lowestCash": -293495.06390706945
     },
     {
       "retainedByMonth12": 0.9,
-      "year1Cash": 102365.5932203389,
-      "year5Cash": -635884.0469579167,
-      "lowestCash": -635884.0469579167
+      "year1Cash": 108590.84745762704,
+      "year5Cash": -629658.7927206284,
+      "lowestCash": -629658.7927206284
     },
     {
       "retainedByMonth12": 0.8,
-      "year1Cash": 65014.0677966101,
-      "year5Cash": -972047.7757714757,
-      "lowestCash": -972047.7757714757
+      "year1Cash": 71239.32203389824,
+      "year5Cash": -965822.5215341876,
+      "lowestCash": -965822.5215341876
     }
   ],
   "membershipGrowth": {
@@ -150,8 +150,8 @@
     "monthlyYearOne": [
       {
         "month": 1,
-        "collected": 66780,
-        "earned": 66780,
+        "collected": 74200,
+        "earned": 74200,
         "members": 317,
         "newMembers": 0,
         "signups": 0,
@@ -270,7 +270,7 @@
       }
     ],
     "annualMembershipCash": [
-      1075497.5,
+      1082917.5,
       1432247.5,
       1721747.5,
       1972406.25,
@@ -283,9 +283,9 @@
       725,
       800
     ],
-    "year1EndingCash": 269227.9760696666,
-    "year5EndingCash": 2182717.4788276255,
-    "lowestBankCash": 99453.55932203389,
-    "debtFreeOperatingMonth": 26
+    "year1EndingCash": 274021.42183237855,
+    "year5EndingCash": 2187619.1851070216,
+    "lowestBankCash": 100000,
+    "debtFreeOperatingMonth": 25
   }
 }

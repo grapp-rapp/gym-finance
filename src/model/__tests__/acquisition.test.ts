@@ -8,6 +8,7 @@ import { validPlan } from '../../../server/validation.mjs';
 function setup() {
   const a = acquisitionAssumptions(DEFAULT_ASSUMPTIONS);
   a.acquisition!.growth!.enabled = false;
+  a.acquisition!.renovationCollectionShare = .9; // Explicit downside fixture, not the new base case.
   return a;
 }
 describe('acquire and improve in phases', () => {

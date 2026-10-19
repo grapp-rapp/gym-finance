@@ -11,7 +11,7 @@ describe('acquisition membership growth', () => {
     expect(acquisitionRevenue(a, 2).members).toBe(329);
     expect(acquisitionRevenue(a, 13).members).toBe(458);
     expect(acquisitionRevenue(a, 12).collected).toBeCloseTo(74200 + 133 * blendedMembershipFee(a), 6);
-    expect(acquisitionRevenue(a, 1).collected).toBeCloseTo(74200 * .9, 6);
+    expect(acquisitionRevenue(a, 1).collected).toBeCloseTo(74200, 6);
     expect(DEFAULT_ASSUMPTIONS.yearEndTargets).toEqual([450, 600, 725, 800, 850]);
   });
   it('calculates replacement sales after churn without selling the same growth twice', () => {
@@ -42,7 +42,7 @@ describe('acquisition membership growth', () => {
     expect(acquisitionRevenue(a, 12).members).toBe(317);
     expect(acquisitionRevenue(a, 12).signups).toBe(0);
     a.capacity = 200;
-    expect(acquisitionRevenue(a, 1).collected).toBeCloseTo(74200 * 200 / 317 * .9, 6);
+    expect(acquisitionRevenue(a, 1).collected).toBeCloseTo(74200 * 200 / 317, 6);
   });
   it('replaces expiring prepaid cohorts without collecting their prepaid fees again', () => {
     const a = acquisitionAssumptions(DEFAULT_ASSUMPTIONS);

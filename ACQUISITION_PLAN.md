@@ -45,7 +45,7 @@ Current working collections are **₪74,200 gross/month**. Improvements of 5–1
 
 Amounts above include card fees and VAT settlement, but exclude owner salaries and corporate profit tax. Paying loan principal is not a tax deduction. Gross break-even before tax is approximately **₪85,112/month** after financing. A steady taxable month at first-repayment-month interest requires about **₪87,874 gross**, before owner salaries and without carried tax losses. Aiming only for before-tax break-even leaves very little operating margin.
 
-The full five-year forecast includes tax, one month at 90% collections during works, debt sweeps and the selected owner policy. The cash target limits voluntary debt payments; it cannot guarantee future liquidity if scheduled repayments exceed trading cash. Negative cash is an unfunded gap, not an assumed overdraft. Full results and explicit 90% / 80% retention stress tests are in [ACQUISITION_COMPARISON.json](ACQUISITION_COMPARISON.json), reproducible with `node scripts/acquisition-report.mjs`.
+The full five-year forecast includes tax, brief renovation work with no assumed collection loss, debt sweeps and the selected owner policy. The cash target limits voluntary debt payments; it cannot guarantee future liquidity if scheduled repayments exceed trading cash. Negative cash is an unfunded gap, not an assumed overdraft. Full results and explicit 90% / 80% retention stress tests are in [ACQUISITION_COMPARISON.json](ACQUISITION_COMPARISON.json), reproducible with `node scripts/acquisition-report.mjs`.
 
 ## Membership growth — updated base case
 
@@ -55,9 +55,15 @@ Targets are active PEOPLE after retention losses and new-member churn, capped at
 
 Historical collections remain the starting income. New members contribute the formula-driven current recurring price mix (₪241.25 gross under 85% standard / 10% soldier-student / 5% couple members). Existing memberships are not all repriced immediately. One-month and day-pass quantities stay zero. Target mode pauses manual monthly signups and annual revenue growth to prevent double counting. Price inflation and any existing historical-income uplift retain their separate meanings.
 
-With the unchanged unpaid-owner policy, phase two off and existing financial assumptions, this base case produces approximately **₪1,075,498 year-one collections**, **₪269,228 year-one ending bank cash**, debt repayment in **operating month 26**, and **₪2,182,717 year-five ending cash**. Lowest cash remains about **₪99,454**, briefly below the ₪100,000 target during renovation month one. These are conditional forecasts, not guaranteed results. Salary scenarios and equipment upgrades reduce the available surplus when enabled.
+With the unchanged unpaid-owner policy, phase two off and existing financial assumptions, this base case produces approximately **₪1,082,918 year-one collections**, **₪274,021 year-one ending bank cash**, debt repayment in **operating month 25**, and **₪2,187,619 year-five ending cash**. Lowest cash is **₪100,000**, with the target preserved under the default scenario. These are conditional forecasts, not guaranteed results. Salary scenarios and equipment upgrades reduce the available surplus when enabled.
 
 Older acquisition saves with zero manual growth use this requested growth path automatically. Existing customized manual signups or annual revenue growth remain active until the user selects target mode. Explicitly disabling targets is respected. New target settings travel with the same saved account model and JSON backups; no database schema change is needed. Original full-rebuild models are unaffected.
+
+## Brief closures during cosmetic work
+
+The base case assumes just **two full closure days** for flooring / painting, with trading continuing around the other work. Closure days are an operational planning input and do not automatically reduce monthly recurring payments, delay the growth ramp or remove running costs. The separate **Collection reduction during work** input defaults to **0%**, with a one-month adjustment window available if refunds, freezes or lost sales are expected. Set a reduction and its affected months only when supported by the work plan.
+
+Older acquisition saves using the stock one-month / 90% collections allowance automatically use the revised no-loss assumption. Other customized collection reductions remain in place. Saving an explicit reduction also saves the closure-day setting, so a deliberate 10% reduction is respected. The original rebuild closure logic is unchanged.
 
 ## Membership transition and phase two
 
