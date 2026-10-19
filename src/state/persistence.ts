@@ -1,4 +1,4 @@
-import { DEFAULT_ASSUMPTIONS, DEFAULT_SCENARIOS, acquisitionAssumptions, ACQUISITION_POLICY, type ActualEntry, type Assumptions, type ScenarioPolicy } from '../model';
+import { DEFAULT_ASSUMPTIONS, DEFAULT_SCENARIOS, acquisitionAssumptions, reinvestmentAssumptions, ACQUISITION_POLICY, type ActualEntry, type Assumptions, type ScenarioPolicy } from '../model';
 import { migratePricingPlan } from './pricingMigration';
 import { migrateReservePlan } from './reserveMigration';
 
@@ -23,7 +23,8 @@ export function decodeState(value: unknown): PersistedState {
   if (![1, 2, 3].includes(parsed.version ?? 0) || !parsed.assumptions || !Array.isArray(parsed.scenarios) || !parsed.scenarios.length || !Array.isArray(parsed.actuals)) throw new Error('Unsupported saved model');
   const base = defaultState();
   // Loading an old saved plan must never silently switch its financial strategy.
-  return migratePricingPlan(migrateReservePlan({ ...base, ...parsed, assumptions: { ...DEFAULT_ASSUMPTIONS, ...parsed.assumptions }, scenarios: parsed.scenarios }));
+  const migrated = migratePricingPlan(migrateReservePlan({ ...base, ...parsed, assumptions: { ...DEFAULT_ASSUMPTIONS, ...parsed.assumptions }, scenarios: parsed.scenarios }));
+  return { ...migrated, assumptions: reinvestmentAssumptions(migrated.assumptions) };
 }
 export function activateAcquisition(state: PersistedState): PersistedState {
   if (state.assumptions.acquisition?.enabled) return state;
@@ -34,7 +35,7 @@ export function activateAcquisition(state: PersistedState): PersistedState {
 export function swapPreviousPlan(state: PersistedState): PersistedState {
   if (!state.previousPlan) return state;
   const { assumptions, scenarios, selectedScenarioId, actuals, anchorMonth, mode } = structuredClone(state);
-  return { ...state, ...state.previousPlan, previousPlan: { assumptions, scenarios, selectedScenarioId, actuals, anchorMonth, mode } };
+  return { ...state, ...state.previousPlan, assumptions: reinvestmentAssumptions(state.previousPlan.assumptions), previousPlan: { assumptions, scenarios, selectedScenarioId, actuals, anchorMonth, mode } };
 }
 export function loadLegacy(): { state: PersistedState; exists: boolean } {
   try {

@@ -16,6 +16,8 @@ export interface MemberCohort {
 }
 export interface AcquisitionPlan {
   enabled: boolean;
+  /** Marks the requested scheduled-payments / reinvestment update as applied. */
+  capitalPolicyVersion?: 1;
   /** Net active-member goals. Absent on older saved acquisition plans. */
   growth?: { enabled: boolean; yearEndTargets: [number, number, number, number, number] };
   purchaseGross: number;
@@ -39,6 +41,8 @@ export interface AcquisitionPlan {
   graceType: 'capitalized' | 'interest-only' | 'free';
   phase2Enabled: boolean;
   phase2Gross: number;
+  /** Women's allocation is the remainder of the combined equipment budget. */
+  phase2MenGross?: number;
   phase2Vatable: boolean;
   phase2OperatingMonth: number;
   phase2GuardCash: boolean;

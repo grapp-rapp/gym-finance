@@ -12,6 +12,8 @@ const numericAssumptions = ['selfFinancing','launchMembers','closureMonths','ope
 const scenarioNumbers = ['preDebtStartMonth','preDebtSalary','postDebtSalary','cashTarget','sweepFrequency','firstSweepMonth'];
 function validAcquisition(p) {
   if (!object(p) || !['enabled','purchaseVatable','phase2Enabled','phase2GuardCash','phase2Vatable'].every(k => typeof p[k] === 'boolean')) return false;
+  if (p.capitalPolicyVersion !== undefined && p.capitalPolicyVersion !== 1) return false;
+  if (p.phase2MenGross !== undefined && (typeof p.phase2MenGross !== 'number' || p.phase2MenGross < 0 || p.phase2MenGross > p.phase2Gross)) return false;
   if (p.growth !== undefined && (!object(p.growth) || typeof p.growth.enabled !== 'boolean' || !Array.isArray(p.growth.yearEndTargets) || p.growth.yearEndTargets.length !== 5 || !p.growth.yearEndTargets.every(n => Number.isInteger(n) && n >= 0 && n <= 1000000))) return false;
   if (p.renovationClosureDays !== undefined && (!Number.isInteger(p.renovationClosureDays) || p.renovationClosureDays < 0 || p.renovationClosureDays > 365)) return false;
   const nonnegative = ['purchaseGross','contingencyRate','adminGross','sellerSettlementGross','baselineMonthlyGross','newMembersPerMonth','phase2Gross'];

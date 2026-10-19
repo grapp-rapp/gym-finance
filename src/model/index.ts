@@ -10,3 +10,4 @@ export * from './cashflow';
 export * from './scenarios';
 export * from './reconcile';
 export * from './acquisition';
+export * from './equipment';

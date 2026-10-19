@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { browserStorage } from './transport';
+import { browserStorage, cloudTransport } from './transport';
+import type { AuthClient } from './authClient';
+vi.mock('./authClient', () => ({ getAuthToken: vi.fn(async () => 'test-token') }));
 import { defaultState, LEGACY_STORAGE_KEY } from '../state/persistence';
 afterEach(() => vi.unstubAllGlobals());
 function storageFixture() {
@@ -20,5 +22,24 @@ describe('account-scoped browser migration', () => {
   it('keeps account caches separate and preserves pending changes across refresh', () => {
     storageFixture(); const a = browserStorage('account-a'); a.write({ state: defaultState(), revision: 2, pending: true });
     expect(browserStorage('account-a').read()?.pending).toBe(true); expect(browserStorage('account-b').read()).toBeNull();
+  });
+});
+
+
+describe('cloud model upgrades', () => {
+  it('applies the reinvestment policy to the remote account model on every computer', async () => {
+    const old = defaultState(); delete old.assumptions.acquisition!.capitalPolicyVersion;
+    old.assumptions.sweepsEnabled = true; old.assumptions.acquisition!.phase2Enabled = false;
+    old.assumptions.acquisition!.phase2Gross = 150000;
+    old.assumptions.priceStandard = 267; old.assumptions.vatRate = .18;
+    const original = structuredClone(old);
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ model: { state: old, revision: 9, updatedAt: 'test' } }) })));
+    const loaded = await cloudTransport({} as AuthClient).load();
+    expect(loaded?.revision).toBe(9);
+    expect(loaded?.state.assumptions.sweepsEnabled).toBe(false);
+    expect(loaded?.state.assumptions.acquisition?.phase2Gross).toBe(200000);
+    expect(loaded?.state.assumptions.priceStandard).toBe(267);
+    expect(loaded?.state.assumptions.vatRate).toBe(.18);
+    expect(old).toEqual(original);
   });
 });
