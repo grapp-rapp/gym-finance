@@ -7,9 +7,28 @@ export const ACQUISITION_POLICY: ScenarioPolicy = {
   sweepFrequency: 6, firstSweepMonth: 12, builtIn: true,
 };
 
+export const ACQUISITION_GROWTH_TARGETS: [number, number, number, number, number] = [450, 550, 650, 725, 800];
+
+/** Older flat acquisition plans get the requested growth path; preserve custom manual growth. */
+export function acquisitionGrowth(p: AcquisitionPlan) {
+  return p.growth ?? {
+    enabled: p.newMembersPerMonth === 0 && p.annualRevenueGrowth === 0,
+    yearEndTargets: [...ACQUISITION_GROWTH_TARGETS] as [number, number, number, number, number],
+  };
+}
+
+export function acquisitionMemberTarget(a: Assumptions, month: number) {
+  const targets = acquisitionGrowth(a.acquisition!).yearEndTargets;
+  const year = Math.min(4, Math.floor((Math.max(1, month) - 1) / 12));
+  const start = year === 0 ? a.currentMembers : targets[year - 1];
+  const progress = year === 0 ? (Math.max(1, month) - 1) / 11 : (month - year * 12) / 12;
+  return Math.min(a.capacity, Math.max(0, Math.round(start + (targets[year] - start) * Math.min(1, progress))));
+}
+
 export function acquisitionDefaults(): AcquisitionPlan {
   return {
     enabled: true, purchaseGross: 150000, purchaseVatable: false, contingencyRate: 0.15, adminGross: 15000, sellerSettlementGross: 0,
+    growth: { enabled: true, yearEndTargets: [...ACQUISITION_GROWTH_TARGETS] },
     renovation: [
       { id: 'floor', name: 'Flooring', gross: 65000, vatable: true, note: 'Planning allowance: approximately 300 m² × ₪217 installed. Measure the area and obtain quotes.' },
       { id: 'paint', name: 'Painting and wall repairs', gross: 20000, vatable: true, note: 'Cosmetic work; allow more for high ceilings or damaged surfaces.' },
@@ -55,17 +74,16 @@ export function acquisitionStartupLines(a: Assumptions): StartupCostLine[] {
   ];
 }
 
-export function acquisitionRevenue(a: Assumptions, month: number) {
+/** Existing-member economics, before disruption and new signups. */
+function existingRevenue(a: Assumptions, month: number, targetsEnabled: boolean) {
   const p = a.acquisition!;
-  if (month === 0) return { collected: 0, earned: 0, members: 0 };
-  const factor = month <= p.renovationMonths ? p.renovationCollectionShare : 1;
   const fee = blendedMembershipFee(a) * Math.pow(1 + a.priceInflation, Math.floor((month - 1) / 12));
-  const newMembers = p.monthlyChurn === 0 ? p.newMembersPerMonth * month : p.newMembersPerMonth * (1 - Math.pow(1 - p.monthlyChurn, month)) / p.monthlyChurn;
   if (p.revenueMode === 'baseline') {
     const retention = 1 + (p.retainedAtYearOne - 1) * Math.min(1, (month - 1) / 11);
-    const members = Math.min(a.capacity, Math.round(a.currentMembers * retention + newMembers));
-    const admittedNew = Math.max(0, Math.min(newMembers, a.capacity - a.currentMembers * retention));
-    const collected = (p.baselineMonthlyGross * (1 + p.revenueUplift) * retention * Math.pow(1 + p.annualRevenueGrowth, Math.floor((month - 1) / 12)) + admittedNew * fee) * factor;
+    const members = a.currentMembers * retention;
+    // Member targets already create sales growth; do not compound a second revenue-growth assumption.
+    const annualGrowth = targetsEnabled ? 0 : p.annualRevenueGrowth;
+    const collected = p.baselineMonthlyGross * (1 + p.revenueUplift) * retention * Math.pow(1 + annualGrowth, Math.floor((month - 1) / 12));
     return { collected, earned: collected, members };
   }
   let members = 0, collected = 0, earned = 0;
@@ -78,8 +96,40 @@ export function acquisitionRevenue(a: Assumptions, month: number) {
     earned += income;
     if (renewed || !c.prepaid) collected += income;
   }
-  const admittedNew = Math.max(0, Math.min(newMembers, a.capacity - members));
-  return { collected: (collected + admittedNew * fee) * factor, earned: (earned + admittedNew * fee) * factor, members: Math.round(members + admittedNew) };
+  return { collected, earned, members };
+}
+
+export function acquisitionRevenue(a: Assumptions, month: number) {
+  const p = a.acquisition!;
+  if (month === 0) return { collected: 0, earned: 0, members: 0, newMembers: 0, signups: 0, lostNewMembers: 0, targetMembers: 0 };
+  const targetsEnabled = acquisitionGrowth(p).enabled;
+  const existing = existingRevenue(a, month, targetsEnabled);
+  const factor = month <= p.renovationMonths ? p.renovationCollectionShare : 1;
+  const fee = blendedMembershipFee(a) * Math.pow(1 + a.priceInflation, Math.floor((month - 1) / 12));
+  let newMembers = 0, signups = 0, lostNewMembers = 0;
+  if (targetsEnabled) {
+    // Add enough sales to reach the NET goal after retention losses and new-member churn.
+    // Falling goals never cancel existing memberships; churn can reduce the count naturally.
+    for (let m = 1; m <= month; m++) {
+      const legacy = existingRevenue(a, m, true);
+      lostNewMembers = newMembers * p.monthlyChurn;
+      const survivors = Math.min(newMembers - lostNewMembers, Math.max(0, a.capacity - legacy.members));
+      signups = Math.max(0, acquisitionMemberTarget(a, m) - legacy.members - survivors);
+      newMembers = survivors + signups;
+    }
+  } else {
+    newMembers = p.monthlyChurn === 0 ? p.newMembersPerMonth * month : p.newMembersPerMonth * (1 - Math.pow(1 - p.monthlyChurn, month)) / p.monthlyChurn;
+    signups = Math.min(p.newMembersPerMonth, Math.max(0, a.capacity - existing.members - (newMembers - p.newMembersPerMonth)));
+  }
+  const admittedNew = Math.max(0, Math.min(newMembers, a.capacity - existing.members));
+  const existingCapacityShare = targetsEnabled && existing.members > a.capacity ? a.capacity / existing.members : 1;
+  return {
+    collected: (existing.collected * existingCapacityShare + admittedNew * fee) * factor,
+    earned: (existing.earned * existingCapacityShare + admittedNew * fee) * factor,
+    members: Math.min(a.capacity, Math.round(existing.members + admittedNew)),
+    newMembers: admittedNew, signups, lostNewMembers,
+    targetMembers: acquisitionMemberTarget(a, month),
+  };
 }
 
 export function monthlyBreakEven(a: Assumptions, economicOpex: number, debt = 0, ownerPay = 0) {

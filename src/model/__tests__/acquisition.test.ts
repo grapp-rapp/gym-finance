@@ -4,7 +4,12 @@ import { activateAcquisition, decodeState, defaultState, swapPreviousPlan, type 
 import { actualTotals } from '../actuals';
 import { validPlan } from '../../../server/validation.mjs';
 
-function setup() { return acquisitionAssumptions(DEFAULT_ASSUMPTIONS); }
+// The flat-income downside remains available independently of the new growth base case.
+function setup() {
+  const a = acquisitionAssumptions(DEFAULT_ASSUMPTIONS);
+  a.acquisition!.growth!.enabled = false;
+  return a;
+}
 describe('acquire and improve in phases', () => {
   it('budgets 395k gross, keeps the 100k target as cash and excludes the old machine purchase', () => {
     const a = setup(), s = startupTotals(a);

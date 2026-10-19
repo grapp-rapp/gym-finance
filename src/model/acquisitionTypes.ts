@@ -16,6 +16,8 @@ export interface MemberCohort {
 }
 export interface AcquisitionPlan {
   enabled: boolean;
+  /** Net active-member goals. Absent on older saved acquisition plans. */
+  growth?: { enabled: boolean; yearEndTargets: [number, number, number, number, number] };
   purchaseGross: number;
   purchaseVatable: boolean;
   renovation: AcquisitionCost[];
