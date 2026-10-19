@@ -1,6 +1,6 @@
 # Buy, refresh, then improve — 19 October 2026
 
-The new plan buys the existing operation for ₪150,000, retains its machines, makes cosmetic improvements and keeps the studio. It replaces general hourly gym staffing with Hodaya at ₪9,000 total employer cost, plus ₪14,500 for studio instructors. Other existing expense lines remain editable. Owner salaries and phase-two equipment spending default to zero / off.
+The new plan buys the existing operation for ₪150,000, retains its machines, makes cosmetic improvements and keeps the studio. It replaces general hourly gym staffing with Hodaya at ₪9,000 total employer cost, plus ₪14,500 for studio instructors. Other existing expense lines remain editable. Owner salaries default to zero. The equipment plan now defaults to ₪200,000 across both gyms, with extra debt sweeps paused and purchases funded only when affordable.
 
 ## Initial cash budget
 
@@ -45,7 +45,7 @@ Current working collections are **₪74,200 gross/month**. Improvements of 5–1
 
 Amounts above include card fees and VAT settlement, but exclude owner salaries and corporate profit tax. Paying loan principal is not a tax deduction. Gross break-even before tax is approximately **₪85,112/month** after financing. A steady taxable month at first-repayment-month interest requires about **₪87,874 gross**, before owner salaries and without carried tax losses. Aiming only for before-tax break-even leaves very little operating margin.
 
-The full five-year forecast includes tax, brief renovation work with no assumed collection loss, debt sweeps and the selected owner policy. The cash target limits voluntary debt payments; it cannot guarantee future liquidity if scheduled repayments exceed trading cash. Negative cash is an unfunded gap, not an assumed overdraft. Full results and explicit 90% / 80% retention stress tests are in [ACQUISITION_COMPARISON.json](ACQUISITION_COMPARISON.json), reproducible with `node scripts/acquisition-report.mjs`.
+The full five-year forecast includes tax, brief renovation work with no assumed collection loss, scheduled debt payments, the selected equipment investment and owner policy. Extra debt sweeps are paused by default. The cash target limits voluntary debt payments; it cannot guarantee future liquidity if scheduled repayments exceed trading cash. Negative cash is an unfunded gap, not an assumed overdraft. Full results and explicit 90% / 80% retention stress tests are in [ACQUISITION_COMPARISON.json](ACQUISITION_COMPARISON.json), reproducible with `node scripts/acquisition-report.mjs`.
 
 ## Membership growth — updated base case
 
@@ -55,7 +55,7 @@ Targets are active PEOPLE after retention losses and new-member churn, capped at
 
 Historical collections remain the starting income. New members contribute the formula-driven current recurring price mix (₪241.25 gross under 85% standard / 10% soldier-student / 5% couple members). Existing memberships are not all repriced immediately. One-month and day-pass quantities stay zero. Target mode pauses manual monthly signups and annual revenue growth to prevent double counting. Price inflation and any existing historical-income uplift retain their separate meanings.
 
-With the unchanged unpaid-owner policy, phase two off and existing financial assumptions, this base case produces approximately **₪1,082,918 year-one collections**, **₪274,021 year-one ending bank cash**, debt repayment in **operating month 25**, and **₪2,187,619 year-five ending cash**. Lowest cash is **₪100,000**, with the target preserved under the default scenario. These are conditional forecasts, not guaranteed results. Salary scenarios and equipment upgrades reduce the available surplus when enabled.
+With the unchanged unpaid-owner policy, scheduled payments only and the ₪200,000 equipment plan, this base case produces approximately **₪1,082,918 year-one collections**, **₪274,021 year-one ending bank cash**, and **₪2,097,398 year-five ending cash**. Equipment is first affordable in **operating month 14**. Lowest cash is approximately **₪101,700**. About **₪115,024 debt remains after five years**; contractual repayment finishes in **operating month 72** at the entered terms. These forecasts depend on delivering the membership goals.
 
 Older acquisition saves with zero manual growth use this requested growth path automatically. Existing customized manual signups or annual revenue growth remain active until the user selects target mode. Explicitly disabling targets is respected. New target settings travel with the same saved account model and JSON backups; no database schema change is needed. Original full-rebuild models are unaffected.
 
@@ -70,8 +70,25 @@ Older acquisition saves using the stock one-month / 90% collections allowance au
 - Historical collections mode preserves the entered all-in starting run rate, with separate retention and uplift assumptions; target mode adds the required new members. Manual annual growth and signup settings are available when targets are off. Flat retention is a scenario assumption, not evidence of long-term renewals.
 - Cohort mode lets existing memberships expire and renew at the current recurring product mix. Its initial twelve-month expiry schedule, 80% renewal rate and 2% monthly churn after renewal are illustrative, not customer records. Replace them with the actual member ledger.
 - Prepaid members remain active but generate no new cash before renewal. Earned service revenue and new cash collections are kept separate. Seller settlement adds opening cash once and is not recurring sales or profit.
-- Phase two defaults off, with an editable ₪150,000 proposal from month 18. Its affordability gate requires three completed months of positive trading cash after scheduled debt, tax and owners, excluding capital VAT refunds, and enough bank cash to fund the upgrade while retaining the cash target. Otherwise it defers. It does not automatically increase revenue.
+- Phase two defaults on with a combined ₪200,000 equipment budget, initially split ₪100,000 men / ₪100,000 women. The earliest review is month 4; the actual purchase waits until affordable. Its affordability gate requires three completed months of positive trading cash after scheduled debt, tax and owners, excluding capital VAT refunds, and enough bank cash to fund the upgrade while retaining the cash target. Otherwise it defers. It does not automatically increase revenue.
 - Retain the no-touch entry approach, but confirm the actual coverage / emergency arrangement and insurance before fixing the staffing budget.
+
+## Equipment-first allocation — revised policy
+
+Extra debt sweeps default **off**. Scheduled repayments are unchanged. The men’s and women’s spaces share one equipment budget, one aggregate membership/capacity forecast and the existing running-cost ledger; no second lease or staff budget is invented. The split is editable and always sums to the combined total.
+
+The full ₪500,000 alternative covers **equipment for both gyms only**, as clarified by the owner. It is added to the existing ₪395,000 purchase/cosmetic/setup budget; it replaces the ₪200,000 equipment option rather than being added on top of it. Both figures are treated as gross including VAT, subject to actual invoices and quotations.
+
+| Equipment option | Men / women allowance | Purchase + cosmetics + equipment | First affordable operating month | Extra upfront cash to buy at takeover |
+|---|---:|---:|---:|---:|
+| ₪200,000 | ₪100k / ₪100k | ₪595,000 | 14 | ₪195,000 |
+| ₪500,000 | ₪250k / ₪250k | ₪895,000 | 27 | ₪495,000 |
+
+Each comparison uses identical growth and owner pay, scheduled payments only, the current ₪500,000 loan and no additional owner funding. The purchase is a single combined order, not a staged procurement schedule. The three-month positive-trading gate and cash target remain active; future VAT refunds cannot fund the gross order upfront. Equipment carries no automatic revenue or capacity uplift. Delaying equipment while keeping the same sales targets is a scenario assumption that needs commercial validation.
+
+To buy everything at takeover and keep ₪100,000 cash, total funding would be ₪695,000 or ₪995,000 respectively, before future VAT refunds. The displayed shortfall is **not** automatically borrowed or added as equity. Users can model a different funding choice explicitly through Financing. Salary scenarios, running costs and pricing are otherwise unchanged.
+
+Existing acquisition models receive this requested capital policy once on load. A version marker preserves subsequent budget changes, deliberate exclusions and any later decision to resume sweeps. Browser cache/import and remote cloud records use the same migration. Full-rebuild plans and historical actuals are retained.
 
 ## Existing saved models
 

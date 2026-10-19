@@ -9,6 +9,20 @@ export const ACQUISITION_POLICY: ScenarioPolicy = {
 
 export const ACQUISITION_GROWTH_TARGETS: [number, number, number, number, number] = [450, 550, 650, 725, 800];
 
+export function equipmentAllocation(p: AcquisitionPlan) {
+  const menGross = p.phase2MenGross ?? p.phase2Gross / 2;
+  return { menGross, womenGross: p.phase2Gross - menGross };
+}
+
+/** Apply the owner's new allocation policy once; later explicit choices are preserved. */
+export function reinvestmentAssumptions(a: Assumptions): Assumptions {
+  if (!a.acquisition?.enabled || a.acquisition.capitalPolicyVersion === 1) return a;
+  return { ...a, sweepsEnabled: false, acquisition: {
+    ...a.acquisition, capitalPolicyVersion: 1, phase2Enabled: true,
+    phase2Gross: 200000, phase2MenGross: 100000, phase2OperatingMonth: 4, phase2GuardCash: true,
+  } };
+}
+
 export function acquisitionDisruption(p: AcquisitionPlan) {
   // Replace the former stock 10% allowance on older saves; keep customized impacts.
   const oldDefault = p.renovationClosureDays === undefined && p.renovationMonths === 1 && p.renovationCollectionShare === .9;
@@ -37,7 +51,7 @@ export function acquisitionMemberTarget(a: Assumptions, month: number) {
 
 export function acquisitionDefaults(): AcquisitionPlan {
   return {
-    enabled: true, purchaseGross: 150000, purchaseVatable: false, contingencyRate: 0.15, adminGross: 15000, sellerSettlementGross: 0,
+    enabled: true, capitalPolicyVersion: 1, purchaseGross: 150000, purchaseVatable: false, contingencyRate: 0.15, adminGross: 15000, sellerSettlementGross: 0,
     growth: { enabled: true, yearEndTargets: [...ACQUISITION_GROWTH_TARGETS] },
     renovation: [
       { id: 'floor', name: 'Flooring', gross: 65000, vatable: true, note: 'Planning allowance: approximately 300 m² × ₪217 installed. Measure the area and obtain quotes.' },
@@ -53,7 +67,7 @@ export function acquisitionDefaults(): AcquisitionPlan {
     revenueMode: 'baseline', monthlyChurn: 0.02, newMembersPerMonth: 0,
     cohorts: Array.from({ length: 12 }, (_, i) => ({ id: `legacy-${i + 1}`, name: `Existing members · renewal month ${i + 1}`, members: 26 + (i < 5 ? 1 : 0), monthlyGross: 206, renewalMonth: i + 1, renewalRate: 0.8, prepaid: false })),
     renovationClosureDays: 2, renovationMonths: 1, renovationCollectionShare: 1, graceType: 'capitalized',
-    phase2Enabled: false, phase2Gross: 150000, phase2Vatable: true, phase2OperatingMonth: 18, phase2GuardCash: true, phase2VatDelay: 2,
+    phase2Enabled: true, phase2Gross: 200000, phase2MenGross: 100000, phase2Vatable: true, phase2OperatingMonth: 4, phase2GuardCash: true, phase2VatDelay: 2,
   };
 }
 
@@ -61,7 +75,7 @@ export function acquisitionAssumptions(base: Assumptions): Assumptions {
   return {
     ...structuredClone(base), acquisition: acquisitionDefaults(), closureMonths: 0, operatingMonths: 60,
     launchMembers: base.currentMembers, loanAPrincipal: 0, loanBPrincipal: 500000, selfFinancing: 0,
-    graceMonths: 12, repaymentMonths: 60, otherIncomeGross: 0, oneMonthPassesPerMonth: 0, dayPassesPerMonth: 0,
+    graceMonths: 12, repaymentMonths: 60, sweepsEnabled: false, otherIncomeGross: 0, oneMonthPassesPerMonth: 0, dayPassesPerMonth: 0,
     boiRate: base.boiRate + base.primeSpread, primeSpread: 0,
     // The old full-rebuild depreciation budget no longer represents these assets.
     monthlyDepreciation: 0,

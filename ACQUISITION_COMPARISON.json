@@ -1,6 +1,6 @@
 {
   "date": "2026-10-19",
-  "basis": "Planning estimates, not quotes; current collection improvements unverified; owners unpaid; phase two off.",
+  "basis": "Planning estimates, not quotes; owners unpaid; scheduled debt payments only; 200k equipment budget across both gyms, paid only when affordable.",
   "startupGross": 395000,
   "startupVatCredit": 32796.61016949153,
   "loanPrincipal": 500000,
@@ -43,9 +43,9 @@
       "monthlyCashAfterScheduledDebtBeforeTax": -6042.319481114793,
       "year1EndingCash": 178412.52840017507,
       "debtFreeOperatingMonth": null,
-      "year5EndingCash": -180370.09027829306,
-      "lowestBankCash": -180370.09027829306,
-      "firstBelowTarget": 19,
+      "year5EndingCash": -139039.03740089035,
+      "lowestBankCash": -139039.03740089035,
+      "firstBelowTarget": 25,
       "annualMembershipCash": [
         934920,
         934920,
@@ -62,9 +62,9 @@
       "monthlyCashAfterScheduledDebtBeforeTax": -2929.6923624707215,
       "year1EndingCash": 207173.20297644616,
       "debtFreeOperatingMonth": null,
-      "year5EndingCash": -81498.53804731256,
-      "lowestBankCash": -81498.53804731256,
-      "firstBelowTarget": 19,
+      "year5EndingCash": 4764.335480465312,
+      "lowestBankCash": 4764.335480465312,
+      "firstBelowTarget": 38,
       "annualMembershipCash": [
         979440,
         979440,
@@ -80,10 +80,10 @@
       "monthlyTradingCashBeforeDebtAndTax": 10016.69491525423,
       "monthlyCashAfterScheduledDebtBeforeTax": 182.93475617335025,
       "year1EndingCash": 235933.87755271737,
-      "debtFreeOperatingMonth": 57,
-      "year5EndingCash": 50922.14321174177,
-      "lowestBankCash": 25889.24280606564,
-      "firstBelowTarget": 19,
+      "debtFreeOperatingMonth": null,
+      "year5EndingCash": 148567.70836182122,
+      "lowestBankCash": 105000,
+      "firstBelowTarget": null,
       "annualMembershipCash": [
         1023960,
         1023960,
@@ -99,9 +99,9 @@
       "monthlyTradingCashBeforeDebtAndTax": 13129.322033898301,
       "monthlyCashAfterScheduledDebtBeforeTax": 3295.561874817422,
       "year1EndingCash": 264694.5521289886,
-      "debtFreeOperatingMonth": 51,
-      "year5EndingCash": 200578.8467842709,
-      "lowestBankCash": 100000,
+      "debtFreeOperatingMonth": null,
+      "year5EndingCash": 292371.08124317735,
+      "lowestBankCash": 105000,
       "firstBelowTarget": null,
       "annualMembershipCash": [
         1068480,
@@ -284,8 +284,49 @@
       800
     ],
     "year1EndingCash": 274021.42183237855,
-    "year5EndingCash": 2187619.1851070216,
-    "lowestBankCash": 100000,
-    "debtFreeOperatingMonth": 25
-  }
+    "year5EndingCash": 2097398.0600567376,
+    "lowestBankCash": 101699.63878067385,
+    "debtFreeOperatingMonth": null
+  },
+  "equipmentComparisons": [
+    {
+      "equipmentGross": 0,
+      "menGross": 0,
+      "womenGross": 0,
+      "purchaseMonth": null,
+      "totalProjectGross": 395000,
+      "extraUpfrontCash": 0,
+      "equipmentVat": 0,
+      "year1Cash": 274021.42183237855,
+      "year5Cash": 2266889.5854804656,
+      "year5Debt": 115024.21124875551,
+      "lowestCash": 105000
+    },
+    {
+      "equipmentGross": 200000,
+      "menGross": 100000,
+      "womenGross": 100000,
+      "purchaseMonth": 14,
+      "totalProjectGross": 595000,
+      "extraUpfrontCash": 195000,
+      "equipmentVat": 30508.47457627117,
+      "year1Cash": 274021.42183237855,
+      "year5Cash": 2097398.0600567376,
+      "year5Debt": 115024.21124875551,
+      "lowestCash": 101699.63878067385
+    },
+    {
+      "equipmentGross": 500000,
+      "menGross": 250000,
+      "womenGross": 250000,
+      "purchaseMonth": 27,
+      "totalProjectGross": 895000,
+      "extraUpfrontCash": 495000,
+      "equipmentVat": 76271.18644067796,
+      "year1Cash": 274021.42183237855,
+      "year5Cash": 1843160.7719211446,
+      "year5Debt": 115024.21124875551,
+      "lowestCash": 105000
+    }
+  ]
 }

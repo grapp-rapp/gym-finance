@@ -1,6 +1,11 @@
 import { getAuthToken, type AuthClient } from './authClient';
 import { ConflictError, type CachedModel, type CloudRecord, type SyncStorage, type SyncTransport } from '../state/cloudSync';
 import { decodeState, defaultState, LEGACY_STORAGE_KEY, type PersistedState } from '../state/persistence';
+import { reinvestmentAssumptions } from '../model/acquisition';
+
+function upgradeCloudRecord(record: CloudRecord): CloudRecord {
+  return { ...record, state: { ...record.state, assumptions: reinvestmentAssumptions(record.state.assumptions) } };
+}
 
 export function cloudTransport(client: AuthClient): SyncTransport {
   async function request(method: string, body?: unknown) {
@@ -12,9 +17,12 @@ export function cloudTransport(client: AuthClient): SyncTransport {
       signal: AbortSignal.timeout(15000), cache: 'no-store',
     });
     const value = await response.json();
-    if (response.status === 409) throw new ConflictError(value.model);
+    if (response.status === 409) {
+      if (!value.model) throw new Error('Cloud conflict did not include a saved model');
+      throw new ConflictError(upgradeCloudRecord(value.model));
+    }
     if (!response.ok) throw new Error(value.error ?? 'Cloud request failed');
-    return value.model as CloudRecord | null;
+    return value.model ? upgradeCloudRecord(value.model) : null;
   }
   return { load: () => request('GET'), save: async (state, revision) => {
     const result = await request('PUT', { state, revision });
