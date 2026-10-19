@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
  */
 
 export const ROUTES = [
+  'strategy',
   'dashboard',
   'monthly',
   'scenarios',

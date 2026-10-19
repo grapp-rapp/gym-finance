@@ -4,6 +4,7 @@ import { Callout, Card, Chip, PageHeader, SectionTitle, StatCard, cx } from '../
 import { formatCurrency, formatNumber, monthLabel } from '../lib/format';
 import { liquidityHealth } from '../model';
 import { useAppState } from '../state/AppState';
+import { AcquisitionOverview } from './AcquisitionPlan';
 import type { Route } from '../lib/router';
 
 /**
@@ -18,6 +19,7 @@ export function Dashboard({ navigate }: { navigate: (route: Route) => void }) {
     useAppState();
 
   const health = liquidityHealth(result);
+  if (assumptions.acquisition?.enabled) return <AcquisitionOverview navigate={navigate} />;
   const year1 = result.years[0];
   const lowestTone = result.minCashAfterReopening < 0 ? 'bad' : result.minCashAfterReopening < selectedScenario.cashTarget ? 'warn' : 'good';
 
@@ -55,6 +57,7 @@ export function Dashboard({ navigate }: { navigate: (route: Route) => void }) {
           </div>
         }
       />
+      <div className="mb-5"><Callout tone="brand" title="New approach: buy and improve in phases">Your saved rebuild plan is unchanged. <button className="underline" onClick={() => navigate('strategy')}>Review and apply the acquisition plan</button> to model the ₪150,000 purchase and cosmetic improvements, retaining a copy of this plan.</Callout></div>
 
       {health === 'danger' && (
         <div className="mb-5">

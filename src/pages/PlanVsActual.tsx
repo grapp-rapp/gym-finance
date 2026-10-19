@@ -50,7 +50,7 @@ export function PlanVsActual() {
       .filter((m) => m.operatingMonth > 0)
       .map((month) => {
         const actual = actuals.find((entry) => entry.timelineMonth === month.timelineMonth);
-        const { cashIn: actualCashIn, cashOut: actualCashOut } = actualTotals(actual);
+        const { cashIn: actualCashIn, cashOut: actualCashOut } = actualTotals(actual, { capitalRequired: (month.capitalSpending ?? 0) > 0, vatRefundRequired: month.startupVatRefund > 0 });
 
         return {
           month,
@@ -329,6 +329,8 @@ function ActualEditor({
       isCurrency: true,
     },
     { key: 'otherCashIn', label: 'Other income collected', planned: month.otherCashIn, isCurrency: true },
+    { key: 'capitalVatRefund', label: 'Capital VAT refund received', planned: month.startupVatRefund, isCurrency: true },
+    { key: 'capitalSpending', label: 'Equipment upgrade / capital spending', planned: month.capitalSpending ?? 0, isCurrency: true },
     {
       key: 'operatingCashOut',
       label: 'Operating cash out',

@@ -26,8 +26,10 @@ export interface LoanTerms {
 
 export function loanTerms(a: Assumptions): LoanTerms {
   const primeRate = a.boiRate + a.primeSpread;
+  const acquisition = a.acquisition?.enabled ? a.acquisition : null;
+  const financedBalance = acquisition?.graceType === 'capitalized' ? a.loanBPrincipal * Math.pow(1 + primeRate / 12, a.graceMonths) : a.loanBPrincipal;
   const loanAPayment = annuityPayment(a.loanAPrincipal, a.loanARate, a.repaymentMonths);
-  const loanBPayment = annuityPayment(a.loanBPrincipal, primeRate, a.repaymentMonths);
+  const loanBPayment = annuityPayment(financedBalance, primeRate, a.repaymentMonths);
   return {
     primeRate,
     loanAPrincipal: a.loanAPrincipal,
@@ -37,8 +39,8 @@ export function loanTerms(a: Assumptions): LoanTerms {
     loanBRate: primeRate,
     loanBPayment,
     totalPayment: loanAPayment + loanBPayment,
-    paymentStartTimelineMonth: a.graceMonths,
-    paymentStartOperatingMonth: Math.max(1, a.graceMonths - a.closureMonths + 1),
+    paymentStartTimelineMonth: acquisition ? a.graceMonths + 1 : a.graceMonths,
+    paymentStartOperatingMonth: acquisition ? a.graceMonths + 1 : Math.max(1, a.graceMonths - a.closureMonths + 1),
   };
 }
 
@@ -73,10 +75,11 @@ export function contractualSchedule(a: Assumptions, totalMonths: number): Contra
     const openingB = balanceB;
 
     // Month 0 is the funding month: balances are drawn, nothing is paid.
-    const inGrace = month === 0 || month < a.graceMonths;
+    const acquisition = a.acquisition?.enabled ? a.acquisition : null;
+    const inGrace = month === 0 || (acquisition ? month <= a.graceMonths : month < a.graceMonths);
     const paymentA = inGrace ? 0 : Math.min(t.loanAPayment, openingA);
-    const interestB = inGrace ? 0 : (openingB * t.primeRate) / 12;
-    const paymentB = inGrace ? 0 : Math.min(t.loanBPayment, openingB + interestB);
+    const interestB = month === 0 || (inGrace && (!acquisition || acquisition.graceType === 'free')) ? 0 : (openingB * t.primeRate) / 12;
+    const paymentB = inGrace ? acquisition?.graceType === 'interest-only' ? interestB : 0 : Math.min(t.loanBPayment, openingB + interestB);
 
     balanceA = Math.max(0, openingA - paymentA);
     balanceB = Math.max(0, openingB + interestB - paymentB);

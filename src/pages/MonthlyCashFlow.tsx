@@ -19,6 +19,7 @@ import { useAppState } from '../state/AppState';
  */
 
 const EVENT_TONE: Record<MonthEvent, Tone> = {
+  'EQUIPMENT UPGRADE': 'brand',
   FUNDING: 'brand',
   BUILD: 'neutral',
   REOPEN: 'good',
@@ -49,7 +50,7 @@ export function MonthlyCashFlow() {
     <div>
       <PageHeader
         title="Monthly cash flow"
-        subtitle={`${result.months.length} timeline months — ${assumptions.closureMonths} build months plus ${assumptions.operatingMonths} operating months. Tap any month for the full picture.`}
+        subtitle={assumptions.acquisition?.enabled ? `Funding month plus ${assumptions.operatingMonths} operating months. Renovation disruption is included in collections; trading costs continue.` : `${result.months.length} timeline months — ${assumptions.closureMonths} build months plus ${assumptions.operatingMonths} operating months. Tap any month for the full picture.`}
         actions={
           <Segmented<Filter>
             value={filter}
@@ -63,7 +64,7 @@ export function MonthlyCashFlow() {
         }
       />
 
-      <p className="mb-4 text-sm text-muted">Membership Cash In includes recurring members, Moatza and one-month sales. Other Cash In includes existing other income plus day-pass sales. All collections include VAT. Operating VAT is settled in the same month and is already included in Operating out; the VAT columns are a breakdown, not extra cash flows.</p>
+      <p className="mb-4 text-sm text-muted">{assumptions.acquisition?.enabled ? 'Membership Cash In follows historical collections or the renewal cohorts, plus explicitly entered pass sales. The seller settlement appears only in the opening bank balance. Funding-day cash is already net of purchase and startup spend. Capital VAT refunds include eligible startup and phase-two credits; capital spending is separate from operating costs. ' : 'Membership Cash In includes recurring members, Moatza and one-month sales. Other Cash In includes existing other income plus day-pass sales. '}All collections include VAT. Operating VAT is already included in Operating out; the VAT columns are a breakdown, not extra cash flows.</p>
       <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
         <Chip tone="brand">{selectedScenario.name}</Chip>
         <Chip tone="neutral">Cash target {formatCurrency(selectedScenario.cashTarget)}</Chip>
@@ -84,7 +85,7 @@ export function MonthlyCashFlow() {
                 </th>
                 <ColGroupHead span={3} label="Where we are" />
                 <ColGroupHead span={4} label="Cash in" tone="good" />
-                <ColGroupHead span={8} label="Cash out" tone="bad" />
+                <ColGroupHead span={9} label="Cash out" tone="bad" />
                 <ColGroupHead span={3} label="Operating VAT · already included" />
                 <ColGroupHead span={5} label="Result" tone="brand" />
                 <th className="border-b border-line bg-surface-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted">
@@ -100,7 +101,7 @@ export function MonthlyCashFlow() {
                 <Th right>Members</Th>
                 <Th right>Membership</Th>
                 <Th right>Other</Th>
-                <Th right>Startup VAT refund</Th>
+                <Th right>Capital VAT refund</Th>
                 <Th right strong>Total in</Th>
                 <Th right>Operating out</Th>
                 <Th right>Loan payment</Th>
@@ -109,6 +110,7 @@ export function MonthlyCashFlow() {
                 <Th right>{assumptions.partner1Name}</Th>
                 <Th right>{assumptions.partner2Name}</Th>
                 <Th right>Employer costs</Th>
+                <Th right>Equipment upgrade</Th>
                 <Th right strong>Total out</Th>
                 <Th right>VAT collected</Th>
                 <Th right>Expense VAT credits</Th>
@@ -282,6 +284,7 @@ function MonthTableRow({
       <Td tone="muted">{formatCurrency(month.partner1Gross)}</Td>
       <Td tone="muted">{formatCurrency(month.partner2Gross)}</Td>
       <Td tone="muted">{formatCurrency(month.employerCosts)}</Td>
+      <Td tone="muted">{formatCurrency(month.capitalSpending ?? 0)}</Td>
       <Td strong>{formatCurrency(month.totalCashOut)}</Td>
 
       <Td>{formatCurrency(month.vatCollected)}</Td>
@@ -462,7 +465,8 @@ function MonthDetail({
             <div className="mt-1">
               <DataRow label="Membership collected" value={formatCurrency(month.membershipCashIn)} />
               <DataRow label="Other income" value={formatCurrency(month.otherCashIn)} />
-              <DataRow label="Startup VAT refund" value={formatCurrency(month.startupVatRefund)} />
+              <DataRow label="Capital VAT refund" value={formatCurrency(month.startupVatRefund)} />
+              {month.membershipEarnedGross !== undefined && <DataRow label="Membership earned · differs from cash for prepayments" value={formatCurrency(month.membershipEarnedGross)} />}
               <DataRow label="Total cash in" value={formatCurrency(month.totalCashIn)} emphasis />
             </div>
           </section>
@@ -472,6 +476,8 @@ function MonthDetail({
             <div className="mt-1">
               <DataRow label="Operating cash out" value={formatCurrency(month.operatingCashOut)} />
               <DataRow label="Loan payment" value={formatCurrency(month.regularDebtPayment)} />
+              {month.capitalizedInterest !== undefined && <DataRow label="Interest added to debt · not a cash payment" value={formatCurrency(month.capitalizedInterest)} />}
+              <DataRow label="Equipment upgrade · capital spending" value={formatCurrency(month.capitalSpending ?? 0)} />
               <DataRow
                 label="Extra debt payment"
                 value={formatCurrency(month.extraDebtPayment)}

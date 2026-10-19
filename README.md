@@ -1,5 +1,7 @@
 # Shaar Binyamin Gym — Owner Finance App
 
+**October 2026 acquisition update:** The current launch plan is acquisition + cosmetic renovation, with equipment replacement deferred. Read [ACQUISITION_PLAN.md](ACQUISITION_PLAN.md) for the budget, revenue assumptions, loan timing, VAT treatment and saved-plan transition. The older sections below document the original full-rebuild reference. Its reconciliation calculations remain available and tested; they are not the new acquisition forecast.
+
 An owner operating dashboard for the Shaar Binyamin gym rebuild. It answers, in ten seconds:
 **how many members, what came in, what went out, what is in the bank, how much debt is left,
 what we pay ourselves, when the debt is gone, and whether we are above or below the cash target.**

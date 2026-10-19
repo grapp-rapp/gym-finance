@@ -1,4 +1,5 @@
 import { excelRoundUp } from './excel';
+import { acquisitionStartupLines } from './acquisition';
 import type { Assumptions, OperatingCostLine, StartupCostLine } from './types';
 
 /** Operating cost totals. Reference: "Operating Costs" sheet, rows 23-26. */
@@ -63,7 +64,7 @@ export interface StartupTotals {
 }
 
 export function startupTotals(a: Assumptions): StartupTotals {
-  const lines = a.startupCosts.filter((line) => line.id !== 'run-in').map((line) => {
+  const lines = (a.acquisition?.enabled ? acquisitionStartupLines(a) : a.startupCosts).filter((line) => line.id !== 'run-in').map((line) => {
     const vat = line.vatable ? line.exVat * a.vatRate : 0;
     return { ...line, vat, gross: line.exVat + vat };
   });
@@ -71,8 +72,8 @@ export function startupTotals(a: Assumptions): StartupTotals {
   const reclaimableVat = lines.reduce((s, l) => s + l.vat, 0);
   const grossCash = lines.reduce((s, l) => s + l.gross, 0);
   const totalFinancing = a.selfFinancing + a.loanAPrincipal + a.loanBPrincipal;
-  const cashHeadroom = totalFinancing - grossCash;
-  const closureCost = a.closureMonths * a.closureCostExVat;
+  const cashHeadroom = totalFinancing + (a.acquisition?.enabled ? a.acquisition.sellerSettlementGross : 0) - grossCash;
+  const closureCost = a.acquisition?.enabled ? 0 : a.closureMonths * a.closureCostExVat;
   return {
     totalExVat,
     reclaimableVat,

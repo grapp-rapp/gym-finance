@@ -1,4 +1,4 @@
-import { defaultState, type PlanMode } from './persistence';
+import { activateAcquisition, defaultState, swapPreviousPlan, type PlanMode } from './persistence';
 import { useSavedModel } from '../cloud/SavedModel';
 import {
   createContext,
@@ -8,8 +8,6 @@ import {
   type ReactNode,
 } from 'react';
 import {
-  DEFAULT_ASSUMPTIONS,
-  DEFAULT_SCENARIOS,
   runModel,
   runScenarios,
   type ActualEntry,
@@ -32,6 +30,9 @@ import {
 export type { PlanMode } from './persistence';
 
 interface AppStateValue {
+  activateAcquisitionPlan: () => void;
+  restorePreviousPlan: () => void;
+  hasPreviousPlan: boolean;
   assumptions: Assumptions;
   scenarios: ScenarioPolicy[];
   selectedScenarioId: string;
@@ -144,15 +145,18 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const resetAll = useCallback(() => setState(defaultState()), []);
+  const activateAcquisitionPlan = useCallback(() => setState(activateAcquisition), []);
+  const restorePreviousPlan = useCallback(() => setState(swapPreviousPlan), []);
 
   const isModified = useMemo(
     () =>
-      JSON.stringify(state.assumptions) !== JSON.stringify(DEFAULT_ASSUMPTIONS) ||
-      JSON.stringify(state.scenarios) !== JSON.stringify(DEFAULT_SCENARIOS),
+      JSON.stringify(state.assumptions) !== JSON.stringify(defaultState().assumptions) ||
+      JSON.stringify(state.scenarios) !== JSON.stringify(defaultState().scenarios),
     [state.assumptions, state.scenarios],
   );
 
   const value: AppStateValue = {
+    activateAcquisitionPlan, restorePreviousPlan, hasPreviousPlan: !!state.previousPlan,
     assumptions: state.assumptions,
     scenarios: state.scenarios,
     selectedScenarioId: state.selectedScenarioId,

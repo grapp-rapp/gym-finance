@@ -10,12 +10,14 @@ import { OperatingCosts } from './pages/OperatingCosts';
 import { PlanVsActual } from './pages/PlanVsActual';
 import { Reconciliation } from './pages/Reconciliation';
 import { ScenarioLab } from './pages/ScenarioLab';
+import { AcquisitionEditor } from './pages/AcquisitionPlan';
 import { AppStateProvider, useAppState } from './state/AppState';
 import { AccountProvider } from './cloud/Auth';
 import { SavedModelProvider, AccountBar } from './cloud/SavedModel';
 
 const NAV: Array<{ route: Route; label: string; short: string; icon: string }> = [
   { route: 'dashboard', label: 'Dashboard', short: 'Home', icon: '◧' },
+  { route: 'strategy', label: 'Acquisition plan', short: 'Plan', icon: '◇' },
   { route: 'monthly', label: 'Monthly cash flow', short: 'Monthly', icon: '▤' },
   { route: 'scenarios', label: 'Scenario lab', short: 'Scenarios', icon: '⚖' },
   { route: 'financing', label: 'Financing', short: 'Debt', icon: '◇' },
@@ -148,6 +150,7 @@ function Shell() {
       {/* --- Page --------------------------------------------------------- */}
       <main className="mx-auto max-w-[1600px] px-4 pt-6 pb-28 sm:px-6 md:pb-12">
         {route === 'dashboard' && <Dashboard navigate={go} />}
+        {route === 'strategy' && <AcquisitionEditor />}
         {route === 'monthly' && <MonthlyCashFlow />}
         {route === 'scenarios' && <ScenarioLab />}
         {route === 'financing' && <Financing />}
@@ -182,7 +185,7 @@ function Shell() {
 
       <footer className="no-print border-t border-line px-4 py-6 text-center text-[13px] text-muted sm:px-6">
         Modelled in ₪ · VAT {(assumptions.vatRate * 100).toFixed(0)}% · Asia/Jerusalem ·{' '}
-        {assumptions.closureMonths + assumptions.operatingMonths} month timeline ·{' '}
+        {result.months.length} month timeline ·{' '}
         <button
           type="button"
           onClick={() => go('reconciliation')}
