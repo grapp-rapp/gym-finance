@@ -26,7 +26,7 @@ export function AcquisitionGrowth({ editable = false, onEdit }: { editable?: boo
       <div className="mb-4 flex flex-wrap gap-2">
         <Button size="sm" variant="secondary" onClick={() => update({ enabled: true, yearEndTargets: [...ACQUISITION_GROWTH_TARGETS] })}>Suggested · 450 / 550 / 650 / 725 / 800</Button>
         <Button size="sm" variant="secondary" onClick={() => update({ enabled: true, yearEndTargets: [...a.yearEndTargets] })}>Use original five-year targets</Button>
-        <Button size="sm" variant="secondary" onClick={() => setAssumptions({ acquisition: { ...p, growth: { ...growth, enabled: false }, newMembersPerMonth: 0, annualRevenueGrowth: 0 } })}>Flat-income stress test</Button>
+        <Button size="sm" variant="secondary" onClick={() => setAssumptions({ acquisition: { ...p, growth: { ...growth, enabled: false }, newMembersPerMonth: 0, annualRevenueGrowth: 0 } })}>No-growth stress test</Button>
       </div>
     </>}
     {!growth.enabled && <Callout tone="warn" title="Annual member targets are off">The forecast currently uses {formatNumber(p.newMembersPerMonth, { showZero: true })} new members per month and {formatPercent(p.annualRevenueGrowth)} annual growth in existing collections. Enable targets to use the year-one growth push.</Callout>}

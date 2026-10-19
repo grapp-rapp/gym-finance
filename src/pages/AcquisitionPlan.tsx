@@ -36,7 +36,7 @@ export function AcquisitionOverview({ navigate }: { navigate: (route: Route) => 
     </div>
     <div className="mt-5 space-y-4">
       {result.minCashFullTimeline < 0 && <Callout tone="bad" title="The purchase is affordable; the operating runway is not yet funded">This forecast goes cash-negative. The minimum additional cash to avoid a negative balance is {formatCurrency(-result.minCashFullTimeline)}; maintaining the full target needs {formatCurrency(selectedScenario.cashTarget - result.minCashFullTimeline)}. More borrowing also raises repayments, so these are cash gaps, not a loan recommendation.</Callout>}
-      <Callout tone="warn" title="Revenue is still an assumption">The ₪74,200 historical working estimate is not a fresh bank reconciliation. The +5% / +10% cases are possibilities, not confirmed growth. The member targets are a sales plan, not observed demand. No trial-pass sales are assumed. Review the monthly signup guide and compare with the flat-income stress test in Acquisition plan. In cohort mode, prepaid members can be active without bringing in new cash.</Callout>
+      <Callout tone="warn" title="Revenue is still an assumption">The ₪74,200 historical working estimate is not a fresh bank reconciliation. The +5% / +10% cases are possibilities, not confirmed growth. The member targets are a sales plan, not observed demand. No trial-pass sales are assumed. Review the monthly signup guide and compare with the no-growth stress test in Acquisition plan. In cohort mode, prepaid members can be active without bringing in new cash.</Callout>
       <RevenueCases />
       <RetentionCases />
       <PricingSummary a={a} />
