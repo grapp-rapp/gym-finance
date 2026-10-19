@@ -32,6 +32,8 @@ export interface AcquisitionPlan {
   cohorts: MemberCohort[];
   monthlyChurn: number;
   newMembersPerMonth: number;
+  /** Operational planning only; collection losses are entered separately. */
+  renovationClosureDays?: number;
   renovationMonths: number;
   renovationCollectionShare: number;
   graceType: 'capitalized' | 'interest-only' | 'free';

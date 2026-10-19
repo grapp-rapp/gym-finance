@@ -50,7 +50,7 @@ export function MonthlyCashFlow() {
     <div>
       <PageHeader
         title="Monthly cash flow"
-        subtitle={assumptions.acquisition?.enabled ? `Funding month plus ${assumptions.operatingMonths} operating months. Renovation disruption is included in collections; trading costs continue.` : `${result.months.length} timeline months — ${assumptions.closureMonths} build months plus ${assumptions.operatingMonths} operating months. Tap any month for the full picture.`}
+        subtitle={assumptions.acquisition?.enabled ? `Funding month plus ${assumptions.operatingMonths} operating months. Only an explicitly entered collection reduction affects renovation-month income; trading costs continue.` : `${result.months.length} timeline months — ${assumptions.closureMonths} build months plus ${assumptions.operatingMonths} operating months. Tap any month for the full picture.`}
         actions={
           <Segmented<Filter>
             value={filter}
@@ -64,7 +64,7 @@ export function MonthlyCashFlow() {
         }
       />
 
-      <p className="mb-4 text-sm text-muted">{assumptions.acquisition?.enabled ? 'Membership Cash In follows historical collections or the renewal cohorts, plus explicitly entered pass sales. The seller settlement appears only in the opening bank balance. Funding-day cash is already net of purchase and startup spend. Capital VAT refunds include eligible startup and phase-two credits; capital spending is separate from operating costs. ' : 'Membership Cash In includes recurring members, Moatza and one-month sales. Other Cash In includes existing other income plus day-pass sales. '}All collections include VAT. Operating VAT is already included in Operating out; the VAT columns are a breakdown, not extra cash flows.</p>
+      <p className="mb-4 text-sm text-muted">{assumptions.acquisition?.enabled ? 'Membership Cash In follows historical collections or the renewal cohorts, plus new members from the growth plan and separately entered pass sales. The seller settlement appears only in the opening bank balance. Funding-day cash is already net of purchase and startup spend. Capital VAT refunds include eligible startup and phase-two credits; capital spending is separate from operating costs. ' : 'Membership Cash In includes recurring members, Moatza and one-month sales. Other Cash In includes existing other income plus day-pass sales. '}All collections include VAT. Operating VAT is already included in Operating out; the VAT columns are a breakdown, not extra cash flows.</p>
       <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
         <Chip tone="brand">{selectedScenario.name}</Chip>
         <Chip tone="neutral">Cash target {formatCurrency(selectedScenario.cashTarget)}</Chip>

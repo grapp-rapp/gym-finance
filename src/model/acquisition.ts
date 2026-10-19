@@ -9,6 +9,16 @@ export const ACQUISITION_POLICY: ScenarioPolicy = {
 
 export const ACQUISITION_GROWTH_TARGETS: [number, number, number, number, number] = [450, 550, 650, 725, 800];
 
+export function acquisitionDisruption(p: AcquisitionPlan) {
+  // Replace the former stock 10% allowance on older saves; keep customized impacts.
+  const oldDefault = p.renovationClosureDays === undefined && p.renovationMonths === 1 && p.renovationCollectionShare === .9;
+  return {
+    closureDays: p.renovationClosureDays ?? 2,
+    months: p.renovationMonths,
+    collectionShare: oldDefault ? 1 : p.renovationCollectionShare,
+  };
+}
+
 /** Older flat acquisition plans get the requested growth path; preserve custom manual growth. */
 export function acquisitionGrowth(p: AcquisitionPlan) {
   return p.growth ?? {
@@ -42,7 +52,7 @@ export function acquisitionDefaults(): AcquisitionPlan {
     baselineMonthlyGross: 74200, revenueUplift: 0, retainedAtYearOne: 1, annualRevenueGrowth: 0,
     revenueMode: 'baseline', monthlyChurn: 0.02, newMembersPerMonth: 0,
     cohorts: Array.from({ length: 12 }, (_, i) => ({ id: `legacy-${i + 1}`, name: `Existing members · renewal month ${i + 1}`, members: 26 + (i < 5 ? 1 : 0), monthlyGross: 206, renewalMonth: i + 1, renewalRate: 0.8, prepaid: false })),
-    renovationMonths: 1, renovationCollectionShare: 0.9, graceType: 'capitalized',
+    renovationClosureDays: 2, renovationMonths: 1, renovationCollectionShare: 1, graceType: 'capitalized',
     phase2Enabled: false, phase2Gross: 150000, phase2Vatable: true, phase2OperatingMonth: 18, phase2GuardCash: true, phase2VatDelay: 2,
   };
 }
@@ -104,7 +114,8 @@ export function acquisitionRevenue(a: Assumptions, month: number) {
   if (month === 0) return { collected: 0, earned: 0, members: 0, newMembers: 0, signups: 0, lostNewMembers: 0, targetMembers: 0 };
   const targetsEnabled = acquisitionGrowth(p).enabled;
   const existing = existingRevenue(a, month, targetsEnabled);
-  const factor = month <= p.renovationMonths ? p.renovationCollectionShare : 1;
+  const disruption = acquisitionDisruption(p);
+  const factor = month <= disruption.months ? disruption.collectionShare : 1;
   const fee = blendedMembershipFee(a) * Math.pow(1 + a.priceInflation, Math.floor((month - 1) / 12));
   let newMembers = 0, signups = 0, lostNewMembers = 0;
   if (targetsEnabled) {
