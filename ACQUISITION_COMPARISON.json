@@ -131,5 +131,161 @@
       "year5Cash": -972047.7757714757,
       "lowestCash": -972047.7757714757
     }
-  ]
+  ],
+  "membershipGrowth": {
+    "targets": [
+      450,
+      550,
+      650,
+      725,
+      800
+    ],
+    "unchangedOriginalTargets": [
+      450,
+      600,
+      725,
+      800,
+      850
+    ],
+    "monthlyYearOne": [
+      {
+        "month": 1,
+        "collected": 66780,
+        "earned": 66780,
+        "members": 317,
+        "newMembers": 0,
+        "signups": 0,
+        "lostNewMembers": 0,
+        "targetMembers": 317
+      },
+      {
+        "month": 2,
+        "collected": 77095,
+        "earned": 77095,
+        "members": 329,
+        "newMembers": 12,
+        "signups": 12,
+        "lostNewMembers": 0,
+        "targetMembers": 329
+      },
+      {
+        "month": 3,
+        "collected": 79990,
+        "earned": 79990,
+        "members": 341,
+        "newMembers": 24,
+        "signups": 12.24,
+        "lostNewMembers": 0.24,
+        "targetMembers": 341
+      },
+      {
+        "month": 4,
+        "collected": 82885,
+        "earned": 82885,
+        "members": 353,
+        "newMembers": 36,
+        "signups": 12.48,
+        "lostNewMembers": 0.48,
+        "targetMembers": 353
+      },
+      {
+        "month": 5,
+        "collected": 85780,
+        "earned": 85780,
+        "members": 365,
+        "newMembers": 48,
+        "signups": 12.719999999999999,
+        "lostNewMembers": 0.72,
+        "targetMembers": 365
+      },
+      {
+        "month": 6,
+        "collected": 88675,
+        "earned": 88675,
+        "members": 377,
+        "newMembers": 60,
+        "signups": 12.96,
+        "lostNewMembers": 0.96,
+        "targetMembers": 377
+      },
+      {
+        "month": 7,
+        "collected": 91811.25,
+        "earned": 91811.25,
+        "members": 390,
+        "newMembers": 73,
+        "signups": 14.200000000000003,
+        "lostNewMembers": 1.2,
+        "targetMembers": 390
+      },
+      {
+        "month": 8,
+        "collected": 94706.25,
+        "earned": 94706.25,
+        "members": 402,
+        "newMembers": 85,
+        "signups": 13.459999999999994,
+        "lostNewMembers": 1.46,
+        "targetMembers": 402
+      },
+      {
+        "month": 9,
+        "collected": 97601.25,
+        "earned": 97601.25,
+        "members": 414,
+        "newMembers": 97,
+        "signups": 13.700000000000003,
+        "lostNewMembers": 1.7,
+        "targetMembers": 414
+      },
+      {
+        "month": 10,
+        "collected": 100496.25,
+        "earned": 100496.25,
+        "members": 426,
+        "newMembers": 109,
+        "signups": 13.939999999999998,
+        "lostNewMembers": 1.94,
+        "targetMembers": 426
+      },
+      {
+        "month": 11,
+        "collected": 103391.25,
+        "earned": 103391.25,
+        "members": 438,
+        "newMembers": 121,
+        "signups": 14.180000000000007,
+        "lostNewMembers": 2.18,
+        "targetMembers": 438
+      },
+      {
+        "month": 12,
+        "collected": 106286.25,
+        "earned": 106286.25,
+        "members": 450,
+        "newMembers": 133,
+        "signups": 14.420000000000002,
+        "lostNewMembers": 2.42,
+        "targetMembers": 450
+      }
+    ],
+    "annualMembershipCash": [
+      1075497.5,
+      1432247.5,
+      1721747.5,
+      1972406.25,
+      2189531.25
+    ],
+    "yearEndMembers": [
+      450,
+      550,
+      650,
+      725,
+      800
+    ],
+    "year1EndingCash": 269227.9760696666,
+    "year5EndingCash": 2182717.4788276255,
+    "lowestBankCash": 99453.55932203389,
+    "debtFreeOperatingMonth": 26
+  }
 }

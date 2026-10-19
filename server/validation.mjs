@@ -12,6 +12,7 @@ const numericAssumptions = ['selfFinancing','launchMembers','closureMonths','ope
 const scenarioNumbers = ['preDebtStartMonth','preDebtSalary','postDebtSalary','cashTarget','sweepFrequency','firstSweepMonth'];
 function validAcquisition(p) {
   if (!object(p) || !['enabled','purchaseVatable','phase2Enabled','phase2GuardCash','phase2Vatable'].every(k => typeof p[k] === 'boolean')) return false;
+  if (p.growth !== undefined && (!object(p.growth) || typeof p.growth.enabled !== 'boolean' || !Array.isArray(p.growth.yearEndTargets) || p.growth.yearEndTargets.length !== 5 || !p.growth.yearEndTargets.every(n => Number.isInteger(n) && n >= 0 && n <= 1000000))) return false;
   const nonnegative = ['purchaseGross','contingencyRate','adminGross','sellerSettlementGross','baselineMonthlyGross','newMembersPerMonth','phase2Gross'];
   if (!nonnegative.every(k => typeof p[k] === 'number' && p[k] >= 0)) return false;
   if (!['retainedAtYearOne','monthlyChurn','renovationCollectionShare'].every(k => typeof p[k] === 'number' && p[k] >= 0 && p[k] <= 1)) return false;

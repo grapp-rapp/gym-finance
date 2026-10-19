@@ -33,7 +33,7 @@ The current app ledger, after the two agreed staffing changes, totals **₪67,50
 
 The loan assumption is ₪500,000 at a modelled annual rate of 4.75%, with no payments for twelve complete operating months, monthly interest capitalized, then sixty amortizing payments. This is a planning rate, not a current bank offer. Balance after grace: **₪524,274**. Payment from operating month 13: **₪9,834/month**. The interest-free loan is zero.
 
-Current working collections are **₪74,200 gross/month**. Improvements of 5–10% are unverified, so the default assumes no improvement. Optional income, trial memberships and day passes are zero. The old automatic growth from 360 to 850 members does not drive the acquisition forecast.
+Current working collections are **₪74,200 gross/month**. Improvements of 5–10% are unverified, so the default assumes no improvement. Optional income, trial memberships and day passes are zero. The acquisition growth plan now starts from the 317 existing members and targets 450 / 550 / 650 / 725 / 800 at successive year ends. Existing-income uplift remains zero; new-member revenue is added separately at the current recurring mix. The flat-income cases below remain downside stress tests.
 
 | Steady collections case | Gross/month | Cash before debt and tax | Cash after scheduled debt, before tax |
 |---|---:|---:|---:|
@@ -47,9 +47,21 @@ Amounts above include card fees and VAT settlement, but exclude owner salaries a
 
 The full five-year forecast includes tax, one month at 90% collections during works, debt sweeps and the selected owner policy. The cash target limits voluntary debt payments; it cannot guarantee future liquidity if scheduled repayments exceed trading cash. Negative cash is an unfunded gap, not an assumed overdraft. Full results and explicit 90% / 80% retention stress tests are in [ACQUISITION_COMPARISON.json](ACQUISITION_COMPARISON.json), reproducible with `node scripts/acquisition-report.mjs`.
 
+## Membership growth — updated base case
+
+The dashboard and the top of **Acquisition plan** show the editable member targets, a membership chart and a month-by-month year-one signup guide. Year one rises from 317 in operating month 1 to 450 in month 12 (42% net growth); later targets are 550, 650, 725 and 800. The original rebuild targets remain 450 / 600 / 725 / 800 / 850 and can be selected as a preset.
+
+Targets are active PEOPLE after retention losses and new-member churn, capped at capacity. Current retention assumptions are preserved: historical collections retain 100% by month 12 by default; new members have 2% monthly churn. The model calculates replacement signups as well as net additions. The proposed path requires about 147 signups in year one (fractional expected total 146.28); months 2–12 require roughly 12–15 each. This is a sales requirement, not evidence the market will deliver it. Budgeted marketing and staffing costs are unchanged; check whether they can support that sales effort.
+
+Historical collections remain the starting income. New members contribute the formula-driven current recurring price mix (₪241.25 gross under 85% standard / 10% soldier-student / 5% couple members). Existing memberships are not all repriced immediately. One-month and day-pass quantities stay zero. Target mode pauses manual monthly signups and annual revenue growth to prevent double counting. Price inflation and any existing historical-income uplift retain their separate meanings.
+
+With the unchanged unpaid-owner policy, phase two off and existing financial assumptions, this base case produces approximately **₪1,075,498 year-one collections**, **₪269,228 year-one ending bank cash**, debt repayment in **operating month 26**, and **₪2,182,717 year-five ending cash**. Lowest cash remains about **₪99,454**, briefly below the ₪100,000 target during renovation month one. These are conditional forecasts, not guaranteed results. Salary scenarios and equipment upgrades reduce the available surplus when enabled.
+
+Older acquisition saves with zero manual growth use this requested growth path automatically. Existing customized manual signups or annual revenue growth remain active until the user selects target mode. Explicitly disabling targets is respected. New target settings travel with the same saved account model and JSON backups; no database schema change is needed. Original full-rebuild models are unaffected.
+
 ## Membership transition and phase two
 
-- Historical collections mode holds the entered all-in run rate, with separate editable uplift, retention, annual growth and new-member assumptions. Flat retention is a scenario assumption, not evidence of long-term renewals.
+- Historical collections mode preserves the entered all-in starting run rate, with separate retention and uplift assumptions; target mode adds the required new members. Manual annual growth and signup settings are available when targets are off. Flat retention is a scenario assumption, not evidence of long-term renewals.
 - Cohort mode lets existing memberships expire and renew at the current recurring product mix. Its initial twelve-month expiry schedule, 80% renewal rate and 2% monthly churn after renewal are illustrative, not customer records. Replace them with the actual member ledger.
 - Prepaid members remain active but generate no new cash before renewal. Earned service revenue and new cash collections are kept separate. Seller settlement adds opening cash once and is not recurring sales or profit.
 - Phase two defaults off, with an editable ₪150,000 proposal from month 18. Its affordability gate requires three completed months of positive trading cash after scheduled debt, tax and owners, excluding capital VAT refunds, and enough bank cash to fund the upgrade while retaining the cash target. Otherwise it defers. It does not automatically increase revenue.

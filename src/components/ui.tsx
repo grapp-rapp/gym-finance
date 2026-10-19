@@ -355,6 +355,7 @@ export function PercentField({
   decimals = 2,
   min = 0,
   max,
+  disabled,
 }: {
   label: string;
   value: number;
@@ -363,6 +364,7 @@ export function PercentField({
   decimals?: number;
   min?: number;
   max?: number;
+  disabled?: boolean;
 }) {
   return (
     <NumberField
@@ -375,6 +377,7 @@ export function PercentField({
       min={min === undefined ? undefined : min * 100}
       max={max === undefined ? undefined : max * 100}
       hint={hint}
+      disabled={disabled}
     />
   );
 }
