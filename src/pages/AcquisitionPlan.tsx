@@ -8,6 +8,7 @@ import { useAppState } from '../state/AppState';
 import { PricingSummary } from '../components/PricingSummary';
 import { AcquisitionGrowth } from '../components/AcquisitionGrowth';
 import { EquipmentPlan } from '../components/EquipmentPlan';
+import { AcquisitionOptionSummary, MoatzaOptions, OwnerSalaryOptions } from '../components/AcquisitionOptions';
 
 export function AcquisitionOverview({ navigate }: { navigate: (route: Route) => void }) {
   const { assumptions: a, result, selectedScenario, anchorMonth } = useAppState();
@@ -19,7 +20,7 @@ export function AcquisitionOverview({ navigate }: { navigate: (route: Route) => 
   const fundingGap = Math.max(0, startup.grossCash + selectedScenario.cashTarget - startup.totalFinancing - p.sellerSettlementGross);
   return <div>
     <PageHeader title="Buy, refresh, then improve" subtitle="Keep the machines and studio. Grow the existing membership, refresh the space and fund phase two when affordable." actions={<Button onClick={() => navigate('strategy')}>Edit acquisition plan</Button>} />
-    <div className="mb-5"><AcquisitionGrowth onEdit={() => navigate('strategy')} /></div>
+    <div className="mb-5 space-y-4"><AcquisitionOptionSummary onEdit={() => navigate('strategy')} /><AcquisitionGrowth onEdit={() => navigate('strategy')} /></div>
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard label="Purchase + phase-one work" value={formatCurrency(startup.grossCash)} sub="Gross budget including contingency and setup" />
       <StatCard label="Funding needed with cash target" value={formatCurrency(startup.grossCash + selectedScenario.cashTarget - p.sellerSettlementGross)} sub={`${formatCurrency(selectedScenario.cashTarget)} stays in the bank; it is not spent`} />
@@ -80,6 +81,8 @@ export function AcquisitionEditor() {
   if (!active) return <div><PageHeader title="New acquisition approach" subtitle="Buy the gym for ₪150,000, refresh the space and defer replacement machines." /><Callout tone="brand" title="Your saved rebuild plan is intact">Applying the new plan saves a full copy of the current assumptions, salary scenarios, dates and actuals. The new timeline begins separately; old actuals will not be assigned to the wrong months. Loan and staff defaults use the revised discussion, while existing fixed-cost lines and public membership prices are retained.</Callout><Card className="mt-5"><DataRow label="Purchase + renovations + setup" value={formatCurrency(startup.grossCash)} /><DataRow label="Cash target retained in the bank" value={formatCurrency(100000)} /><DataRow label="Funding required before future VAT credits" value={formatCurrency(startup.grossCash+100000)} emphasis /><div className="mt-5"><Button onClick={activateAcquisitionPlan}>{hasPreviousPlan ? 'Return to saved acquisition plan' : 'Apply acquisition plan and keep old-plan copy'}</Button></div></Card><div className="mt-5"><RevenueCases /></div></div>;
   return <div><PageHeader title="Acquisition and phased improvements" subtitle="All budgets below are gross cash, including VAT where invoiced. These are editable planning estimates, not contractor quotations." actions={hasPreviousPlan ? <Button variant="secondary" onClick={restorePreviousPlan}>Restore saved rebuild plan</Button> : undefined} />
     <div className="space-y-5">
+      <MoatzaOptions />
+      <OwnerSalaryOptions />
       <AcquisitionGrowth editable />
       <Card><SectionTitle>1 · Buy and refresh</SectionTitle><div className="grid gap-4 sm:grid-cols-3"><NumberField label="Purchase existing gym" value={p.purchaseGross} onChange={purchaseGross=>update({purchaseGross})} prefix="₪" min={0} /><NumberField label="Setup, legal and migration" value={p.adminGross} onChange={adminGross=>update({adminGross})} prefix="₪" min={0} /><PercentField label="Renovation contingency" value={p.contingencyRate} onChange={contingencyRate=>update({contingencyRate})} max={1} /></div><Toggle label="Purchase price includes reclaimable VAT" description="Off until the invoice / transaction structure is confirmed. The entered gross price stays unchanged." checked={p.purchaseVatable} onChange={purchaseVatable=>update({purchaseVatable})} />
         <div className="mt-4 space-y-4">{p.renovation.map(c => <div key={c.id} className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[1fr_180px_180px]"><div><p className="font-medium text-ink">{c.name}</p><p className="text-xs text-muted">{c.note}</p></div><NumberField label={`${c.name} · budget`} value={c.gross} onChange={gross=>update({renovation:p.renovation.map(x=>x.id===c.id?{...x,gross}:x)})} prefix="₪" min={0} /><Toggle label={`${c.name} · VAT credit`} checked={c.vatable} onChange={vatable=>update({renovation:p.renovation.map(x=>x.id===c.id?{...x,vatable}:x)})} /></div>)}</div>

@@ -73,6 +73,12 @@ Older acquisition saves using the stock one-month / 90% collections allowance au
 - Phase two defaults on with a combined ₪200,000 equipment budget, initially split ₪100,000 men / ₪100,000 women. The earliest review is month 4; the actual purchase waits until affordable. Its affordability gate requires three completed months of positive trading cash after scheduled debt, tax and owners, excluding capital VAT refunds, and enough bank cash to fund the upgrade while retaining the cash target. Otherwise it defers. It does not automatically increase revenue.
 - Retain the no-touch entry approach, but confirm the actual coverage / emergency arrangement and insurance before fixing the staffing budget.
 
+## Moatza and owner salary controls
+
+Both options are now visible at the top of Acquisition Plan (also used by Inputs), with a dashboard status summary and direct edit link. Moatza retains its existing on/off setting, people count, gross fee and start month. It remains additional to organic demand until combined capacity is reached, when it displaces organic billing. The growth display distinguishes organic demand from actual total membership when Moatza is on. Do not duplicate partnership income already included in the historical baseline.
+
+Owner salaries can be edited independently for both partners, including start month, employer costs, before/after-debt amounts and a planned increase while debt remains. Editing a built-in salary policy creates and selects a custom copy; unpaid-owner and other original scenarios remain available. Scenario selection and the unpaid-owner option are directly accessible. Existing saved choices and defaults are not changed by restoring these controls. Salaries and Moatza automatically affect monthly cash, tax and equipment affordability through the existing engine.
+
 ## Equipment-first allocation — revised policy
 
 Extra debt sweeps default **off**. Scheduled repayments are unchanged. The men’s and women’s spaces share one equipment budget, one aggregate membership/capacity forecast and the existing running-cost ledger; no second lease or staff budget is invented. The split is editable and always sums to the combined total.
