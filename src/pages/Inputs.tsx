@@ -21,6 +21,7 @@ import {
 } from '../model';
 import { useAppState } from '../state/AppState';
 import type { Route } from '../lib/router';
+import { AcquisitionEditor } from './AcquisitionPlan';
 
 /**
  * PAGE 4 — Inputs.
@@ -46,6 +47,7 @@ export function Inputs({ navigate }: { navigate: (route: Route) => void }) {
   const startup = startupTotals(a);
   const terms = loanTerms(a);
   const mixTotal = a.mixStandard + a.mixCouple + a.mixSoldier;
+  if (a.acquisition?.enabled) return <AcquisitionEditor />;
 
   return (
     <div>

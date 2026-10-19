@@ -4,6 +4,7 @@ import { contractualInterestTotal, loanTerms } from './financing';
 import { blendedFeeAt, moatzaMembersAt, organicBilledAt, organicMembersAt, reopeningMembers } from './membership';
 import { ownerPayFor } from './ownerPay';
 import { taxStep } from './tax';
+import { acquisitionRevenue } from './acquisition';
 import type {
   Assumptions,
   CashTargetStatus,
@@ -28,7 +29,8 @@ import type {
  * are the balances remaining after the scheduled payment.
  */
 export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult {
-  const totalMonths = a.closureMonths + a.operatingMonths; // 63 rows: month 0 .. month 62
+  const acquisition = a.acquisition?.enabled ? a.acquisition : null;
+  const totalMonths = acquisition ? a.operatingMonths + 1 : a.closureMonths + a.operatingMonths;
   const terms = loanTerms(a);
   const startup = startupTotals(a);
   const opex = operatingCostTotals(a);
@@ -42,50 +44,56 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
   let loanBBalance = a.loanBPrincipal;
   let lossCarryforward = 0;
   let previousDebtRemaining = a.loanAPrincipal + a.loanBPrincipal;
+  let phase2Purchased = false;
+  const capitalVatRefunds = new Map<number, number>();
 
   for (let t = 0; t < totalMonths; t++) {
-    const phase: Phase = t < a.closureMonths ? 'BUILD' : 'OPEN';
-    const operatingMonth = phase === 'OPEN' ? t - a.closureMonths + 1 : 0;
+    const phase: Phase = acquisition ? t === 0 ? 'BUILD' : 'OPEN' : t < a.closureMonths ? 'BUILD' : 'OPEN';
+    const operatingMonth = acquisition ? t : phase === 'OPEN' ? t - a.closureMonths + 1 : 0;
     const operatingYear = operatingMonth > 0 ? Math.ceil(operatingMonth / 12) : 0;
 
     // --- Members & revenue ("Monthly Base" D-K) ----------------------------
-    const organic = organicMembersAt(a, operatingMonth);
-    const organicBilled = organicBilledAt(a, operatingMonth);
+    const acquiredRevenue = acquisition ? acquisitionRevenue(a, operatingMonth) : null;
+    const organic = acquiredRevenue?.members ?? organicMembersAt(a, operatingMonth);
+    const organicBilled = acquisition ? Math.min(organic, Math.max(0, a.capacity - moatzaMembersAt(a, operatingMonth))) : organicBilledAt(a, operatingMonth);
     const moatza = moatzaMembersAt(a, operatingMonth);
     const totalMembers = organicBilled + moatza;
     const blendedFee = blendedFeeAt(a, operatingMonth);
 
     const membershipCashIn =
-      operatingMonth === 0 ? 0 : organicBilled * blendedFee + moatza * a.moatzaFee + a.oneMonthPassesPerMonth * a.priceOneMonth;
+      operatingMonth === 0 ? 0 : (acquiredRevenue ? acquiredRevenue.collected * (organic > 0 ? organicBilled / organic : 1) : organicBilled * blendedFee) + moatza * a.moatzaFee + a.oneMonthPassesPerMonth * a.priceOneMonth;
     const otherCashIn = operatingMonth === 0 ? 0 : a.otherIncomeGross + a.dayPassesPerMonth * a.priceDayPass;
     const grossBillings = membershipCashIn + otherCashIn;
 
     // --- Economics ex VAT ("Monthly Base" L-O) ----------------------------
-    const netRevenueExVat = grossBillings / (1 + a.vatRate);
+    const membershipEarnedGross = acquiredRevenue ? acquiredRevenue.earned * (organic > 0 ? organicBilled / organic : 1) + moatza * a.moatzaFee + a.oneMonthPassesPerMonth * a.priceOneMonth : membershipCashIn;
+    const netRevenueExVat = (membershipEarnedGross + otherCashIn) / (1 + a.vatRate);
     const cardFeesExVat = (grossBillings * a.cardFeeRate) / (1 + a.vatRate);
-    const coreOpexExVat = coreOpexAt(a, operatingMonth, opex.monthlyExVat);
+    const coreOpexExVat = acquisition && t === 0 ? 0 : coreOpexAt(a, operatingMonth, opex.monthlyExVat);
     const ebitda = netRevenueExVat - cardFeesExVat - coreOpexExVat;
+    const operatingCashSurplus = grossBillings / (1 + a.vatRate) - cardFeesExVat - coreOpexExVat;
 
     // Same-month VAT settlement is already included in operatingCashOut below.
     // Closure costs are supplied ex VAT; no invoice VAT is inferred for build months.
-    const vatCollected = grossBillings - netRevenueExVat;
+    const vatCollected = grossBillings - grossBillings / (1 + a.vatRate);
     const expenseVatCredits = operatingMonth === 0 ? 0 :
       opex.monthlyVat * Math.pow(1 + a.opexInflation, Math.max(0, operatingYear - 1)) +
       grossBillings * a.cardFeeRate - cardFeesExVat;
     const netOperatingVat = vatCollected - expenseVatCredits;
 
-    const startupVatRefund = t === a.buildVatRefundMonth ? startup.reclaimableVat : 0;
+    let startupVatRefund = (t === a.buildVatRefundMonth ? startup.reclaimableVat : 0) + (capitalVatRefunds.get(t) ?? 0);
 
     // --- Scheduled debt service ("Owner Pay" I-L) -------------------------
     // Grace is genuinely free: no interest accrues and no payment falls due.
     const openingLoanA = loanABalance;
     const openingLoanB = loanBBalance;
-    const inGrace = t < a.graceMonths;
+    const inGrace = acquisition ? t === 0 || t <= a.graceMonths : t < a.graceMonths;
 
     const loanAScheduled = inGrace || openingLoanA <= 0 ? 0 : Math.min(terms.loanAPayment, openingLoanA);
-    const loanBInterest = inGrace || openingLoanB <= 0 ? 0 : (openingLoanB * terms.primeRate) / 12;
+    const loanBInterest = openingLoanB <= 0 || (inGrace && (!acquisition || t === 0 || acquisition.graceType === 'free')) ? 0 : (openingLoanB * terms.primeRate) / 12;
+    const capitalizedInterest = acquisition && inGrace && acquisition.graceType === 'capitalized' ? loanBInterest : 0;
     const loanBScheduled =
-      inGrace || openingLoanB <= 0 ? 0 : Math.min(terms.loanBPayment, openingLoanB + loanBInterest);
+      inGrace || openingLoanB <= 0 ? acquisition?.graceType === 'interest-only' ? loanBInterest : 0 : Math.min(terms.loanBPayment, openingLoanB + loanBInterest);
     const regularDebtPayment = loanAScheduled + loanBScheduled;
 
     // --- Owner payroll ("Owner Pay" N-P) ----------------------------------
@@ -111,15 +119,28 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
 
     // --- Cash before any voluntary prepayment ("Owner Pay" T) -------------
     const openingCash = previousEndingCash;
-    const cashBeforeExtraDebt =
-      openingCash + ebitda + startupVatRefund - regularDebtPayment - pay.totalPayrollCost - taxResult.tax;
+    let cashBeforeExtraDebt =
+      openingCash + (acquisition ? operatingCashSurplus : ebitda) + startupVatRefund - regularDebtPayment - pay.totalPayrollCost - taxResult.tax;
+    let capitalSpending = 0;
+    if (acquisition?.phase2Enabled && !phase2Purchased && operatingMonth >= acquisition.phase2OperatingMonth) {
+      const recent = months.filter(m => m.operatingMonth > 0).slice(-3);
+      const affordable = recent.length === 3 && recent.every(m => m.membershipCashIn + m.otherCashIn - m.operatingCashOut - m.regularDebtPayment - m.ownerPayrollTotal - m.corporateTax > 0) && cashBeforeExtraDebt - acquisition.phase2Gross >= policy.cashTarget;
+      if (!acquisition.phase2GuardCash || affordable) {
+        capitalSpending = acquisition.phase2Gross;
+        cashBeforeExtraDebt -= capitalSpending;
+        phase2Purchased = true;
+        const credit = acquisition.phase2Vatable ? capitalSpending - capitalSpending / (1 + a.vatRate) : 0;
+        if (acquisition.phase2VatDelay === 0) { startupVatRefund += credit; cashBeforeExtraDebt += credit; }
+        else capitalVatRefunds.set(t + acquisition.phase2VatDelay, credit);
+      }
+    }
 
     // --- Debt sweep ("Owner Pay" U / V) ----------------------------------
     // Prime debt (Loan B) is always retired before the interest-free Loan A.
     const sweepDue =
       a.sweepsEnabled &&
       phase === 'OPEN' &&
-      t >= sweepNotBefore &&
+      t >= (acquisition ? Math.max(sweepNotBefore, a.graceMonths + 1) : sweepNotBefore) &&
       operatingMonth >= policy.firstSweepMonth &&
       (operatingMonth - policy.firstSweepMonth) % policy.sweepFrequency === 0;
 
@@ -141,12 +162,12 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
     // "Operating cash out" is gross collections less EBITDA. It is the real day-to-day
     // cash burden (opex, card fees and the net VAT effect) expressed as one number, so
     // cash in − cash out reconciles exactly to the change in bank cash.
-    const operatingCashOut = grossBillings - ebitda;
+    const operatingCashOut = grossBillings - (acquisition ? operatingCashSurplus : ebitda);
     const operatingGrossCashOut = operatingCashOut - netOperatingVat;
     const extraDebtPayment = extraToLoanB + extraToLoanA;
     const totalCashIn = membershipCashIn + otherCashIn + startupVatRefund;
     const totalCashOut =
-      operatingCashOut + regularDebtPayment + extraDebtPayment + taxResult.tax + pay.totalPayrollCost;
+      operatingCashOut + regularDebtPayment + extraDebtPayment + taxResult.tax + pay.totalPayrollCost + capitalSpending;
     const netCashChange = totalCashIn - totalCashOut;
 
     // --- Events & status --------------------------------------------------
@@ -154,7 +175,8 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
     if (t === 0) events.push('FUNDING');
     if (phase === 'BUILD' && t > 0) events.push('BUILD');
     if (operatingMonth === 1) events.push('REOPEN');
-    if (t === a.graceMonths && regularDebtPayment > 0) events.push('DEBT START');
+    if (t === terms.paymentStartTimelineMonth && regularDebtPayment > 0) events.push('DEBT START');
+    if (capitalSpending > 0) events.push('EQUIPMENT UPGRADE');
     if (extraDebtPayment > 0) events.push('DEBT SWEEP');
     if (pay.partner1Gross + pay.partner2Gross > 0 && previousMonthHadNoSalary(months)) events.push('SALARY START');
     if (debtRemaining === 0 && previousDebtRemaining > 0) events.push('DEBT FREE');
@@ -167,6 +189,7 @@ export function runModel(a: Assumptions, policy: ScenarioPolicy): ScenarioResult
     }
 
     months.push({
+      ...(acquisition ? { capitalSpending, capitalizedInterest, membershipEarnedGross } : {}),
       timelineMonth: t,
       phase,
       operatingMonth,
@@ -314,6 +337,7 @@ export function summariseYears(months: MonthRow[]): YearSummary[] {
       avgMembers: sum((m) => m.totalMembers) / rows.length,
       ebitda: sum((m) => m.ebitda),
       grossBillings: sum((m) => m.membershipCashIn + m.otherCashIn),
+      ...(rows.some(m => m.capitalSpending !== undefined) ? { capitalSpending: sum(m => m.capitalSpending ?? 0) } : {}),
     });
   }
   return years;

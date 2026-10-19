@@ -1,3 +1,5 @@
+import type { AcquisitionPlan } from './acquisitionTypes';
+export type { AcquisitionPlan, AcquisitionCost, MemberCohort } from './acquisitionTypes';
 /**
  * Type definitions for the Shaar Binyamin gym financial model.
  *
@@ -63,6 +65,8 @@ export interface ScenarioPolicy {
 
 /** Every editable input in the model. Defaults mirror the current spreadsheet values. */
 export interface Assumptions {
+  /** Absent keeps the historical rebuild calculations unchanged. */
+  acquisition?: AcquisitionPlan;
   /** Upfront owner equity, not operating income or repayable debt. */
   selfFinancing: number;
   /** Explicit organic membership in the first operating month. */
@@ -175,6 +179,7 @@ export type Phase = 'BUILD' | 'OPEN';
 
 /** Timeline event tags surfaced in the monthly table. */
 export type MonthEvent =
+  | 'EQUIPMENT UPGRADE'
   | 'FUNDING'
   | 'BUILD'
   | 'REOPEN'
@@ -188,6 +193,9 @@ export type CashTargetStatus = 'BUILD' | 'BELOW' | 'AT' | 'ABOVE';
 
 /** One fully computed month of the model. */
 export interface MonthRow {
+  capitalSpending?: number;
+  capitalizedInterest?: number;
+  membershipEarnedGross?: number;
   /** 0-based timeline month, 0..62. Month 0 is the funding month. */
   timelineMonth: number;
   phase: Phase;
@@ -259,6 +267,7 @@ export interface MonthRow {
 
 /** Aggregated results for one operating year (12 operating months). */
 export interface YearSummary {
+  capitalSpending?: number;
   year: number;
   cashIn: number;
   operatingCashOut: number;
@@ -318,6 +327,8 @@ export interface ScenarioResult {
 
 /** Manually entered actuals for one operating month (Plan vs Actual mode). */
 export interface ActualEntry {
+  capitalSpending?: number;
+  capitalVatRefund?: number;
   /** Timeline month this entry belongs to. */
   timelineMonth: number;
   members?: number;

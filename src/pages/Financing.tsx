@@ -2,6 +2,7 @@ import { Card, Chip, DataRow, PageHeader, SectionTitle, StatCard, NumberField, c
 import { formatCurrency, formatPercent, monthLabel } from '../lib/format';
 import { loanTerms, startupTotals, type MonthRow } from '../model';
 import { useAppState } from '../state/AppState';
+import { AcquisitionFunding } from './AcquisitionPlan';
 
 /**
  * PAGE 6 — Financing.
@@ -19,6 +20,7 @@ export function Financing() {
   const loanBSummary = summariseLoan(months, 'B');
   const sweeps = months.filter((m) => m.extraDebtPayment > 0);
   const nextSweep = sweeps[0];
+  if (a.acquisition?.enabled) return <div><PageHeader title="Financing" subtitle="Loan and equity funding are separate from trading income. Interest can accrue during the twelve-month grace." /><AcquisitionFunding /><Card className="mt-5"><SectionTitle>Debt timeline</SectionTitle><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr>{['Month','Payment','Interest accrued','Added to balance','Extra debt','Debt remaining','Ending cash'].map(x=><th key={x} className="p-2 text-right">{x}</th>)}</tr></thead><tbody>{months.map(m=><tr key={m.timelineMonth} className="border-t border-line"><td className="p-2">{monthLabel(anchorMonth,m.timelineMonth)}</td>{[m.regularDebtPayment,m.loanBInterest,m.capitalizedInterest??0,m.extraDebtPayment,m.debtRemaining,m.endingCash].map((v,i)=><td key={i} className="num p-2 text-right">{formatCurrency(v)}</td>)}</tr>)}</tbody></table></div></Card></div>;
 
   return (
     <div>

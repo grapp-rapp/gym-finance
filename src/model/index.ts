@@ -9,3 +9,4 @@ export * from './ownerPay';
 export * from './cashflow';
 export * from './scenarios';
 export * from './reconcile';
+export * from './acquisition';

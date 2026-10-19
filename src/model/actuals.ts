@@ -1,7 +1,7 @@
 import type { ActualEntry } from './types';
 
 /** Missing components are unknown, never implicitly zero. */
-export function actualTotals(actual?: ActualEntry) {
+export function actualTotals(actual?: ActualEntry, options: { capitalRequired?: boolean; vatRefundRequired?: boolean } = {}) {
   const sum = (keys: (keyof ActualEntry)[]) => {
     const values = keys.map((key) => actual?.[key]);
     return values.every((value) => typeof value === 'number' && Number.isFinite(value))
@@ -9,7 +9,7 @@ export function actualTotals(actual?: ActualEntry) {
       : null;
   };
   return {
-    cashIn: sum(['membershipCashIn', 'otherCashIn']),
-    cashOut: sum(['operatingCashOut', 'debtPayment', 'corporateTax', 'ownerPayroll']),
+    cashIn: sum(['membershipCashIn', 'otherCashIn', ...(options.vatRefundRequired || actual?.capitalVatRefund !== undefined ? ['capitalVatRefund' as const] : [])]),
+    cashOut: sum(['operatingCashOut', 'debtPayment', 'corporateTax', 'ownerPayroll', ...(options.capitalRequired || actual?.capitalSpending !== undefined ? ['capitalSpending' as const] : [])]),
   };
 }
